@@ -32,6 +32,7 @@ All checkpoints are available on HuggingFace: [`crumeike/tornadonet-checkpoints`
 | YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline) | Fastest, field-deployable |
 
 \* *Values represent mean ± std across 3 random seeds (paper). Downloaded checkpoints are from the best-performing seed.*
+
 Evaluated on 3,333 street-view images (8,890 building instances) collected after the December 2021 Midwest tornado outbreak.
 
 ---

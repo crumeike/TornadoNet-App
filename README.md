@@ -76,6 +76,21 @@ checkpoints/
 
 Or set `HF_TOKEN` in your `.env` and the API will download them automatically on first request.
 
+### Baseline Performance*
+
+| Model | Type | mAP@0.5 | F1 Score | Ordinal Top-1 | MAOE | FPS | Params | Download |
+|-------|------|---------|----------|---------------|------|-----|--------|----------|
+| YOLO11-n | CNN | 41.14% | 45.73% | 84.79% | 0.77 | 239 | 2.6M | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline) |
+| YOLO11-x | CNN | **46.05%** | **49.40%** | 85.20% | 0.76 | 66 | 56.8M | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline) |
+
+###  Ordinal Supervision Impact*
+| Model | Configuration | mAP@0.5 | Δ vs Baseline | Ordinal Top-1 | MAOE | Download |
+|-------|---------------|---------|---------------|---------------|------|----------|
+| RT-DETR-L | ψ=0.5, K=1 | **44.70%** | **+4.8 pp** | **91.15%** | **0.56** | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1) |
+
+\* *Values represent mean ± std across 3 random seeds (paper). Downloaded checkpoints are from the best-performing seed.*
+
+
 ### 3. Configure environment
 
 ```bash

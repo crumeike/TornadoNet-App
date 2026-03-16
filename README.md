@@ -25,11 +25,11 @@ Built under CRADA CN-24-0590 in collaboration with Johns Hopkins University, the
 
 All checkpoints are available on HuggingFace: [`crumeike/tornadonet-checkpoints`](https://huggingface.co/crumeike/tornadonet-checkpoints)
 
-| Model | mAP@0.5 | Ordinal Acc | MAOE | FPS | Download* | Notes |
+| Model | mAP@0.5 | Ordinal Acc | MAOE | FPS | Notes | Download* |
 |---|---|---|---|---|---|---|
-| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1)| Best severity grading |
-| YOLO11x Baseline | 46.05% | 85.20% | 0.76 | 66 |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline)| Best detection mAP |
-| YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline)| Fastest, field-deployable |
+| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 | Best severity grading |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1)|
+| YOLO11x Baseline | 46.05% | 85.20% | 0.76 | 66 | Best detection mAP |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline)| 
+| YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 | Fastest, field-deployable |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline)| 
 
 \* *Values represent mean ± std across 3 random seeds (paper). Downloaded checkpoints are from the best-performing seed.*
 

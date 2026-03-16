@@ -10,14 +10,14 @@ Built under CRADA CN-24-0590 in collaboration with Johns Hopkins University, the
 
 ## Features
 
-- **Three TornadoNet detection models** — RT-DETR-L with ordinal supervision (best severity grading), YOLO11x (best mAP), and YOLO11n (fastest, field-deployable)
-- **IN-CORE DS0–DS4 classification** — five-level damage states for wood-frame buildings (archetypes T1–T5)
-- **Bounding box detection preview** — color-coded boxes drawn on uploaded images; click any detection row to highlight its building
-- **AI structural assessment** — Claude, GPT-4o, Gemini, or Grok analyze each detected building using the T1–T5 decision matrix (roof covering, window/door, roof sheathing, roof-to-wall connection) and return a final DS assignment per element
-- **NIST-style report generation** — auto-generated damage narrative and response recommendations exportable as PDF
-- **AI triage assistant** — conversational assistant grounded in session detections and the IN-CORE framework
-- **Video frame extraction** — select keyframes from dashcam or 360° video for single-frame inference
-- **Multi-provider LLM support** — Anthropic, OpenAI, Google, xAI
+- **Three TornadoNet detection models**: RT-DETR-L with ordinal supervision (best severity grading), YOLO11x (best mAP), and YOLO11n (fastest, field-deployable)
+- **IN-CORE DS0–DS4 classification**: five-level damage states for wood-frame buildings (archetypes T1–T5)
+- **Bounding box detection preview**: color-coded boxes drawn on uploaded images; click any detection row to highlight its building
+- **AI structural assessment**: Claude, GPT-4o, Gemini, or Grok analyze each detected building using the T1–T5 decision matrix (roof covering, window/door, roof sheathing, roof-to-wall connection) and return a final DS assignment per element
+- **NIST-style report generation**: auto-generated damage narrative and response recommendations exportable as PDF
+- **AI triage assistant**: conversational assistant grounded in session detections and the IN-CORE framework
+- **Video frame extraction**: select keyframes from dashcam or 360° video for single-frame inference
+- **Multi-provider LLM support**: Anthropic, OpenAI, Google, xAI
 
 ---
 

@@ -58,8 +58,8 @@ TornadoNet/
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/crumeike/TornadoNet
-cd TornadoNet
+git clone https://github.com/crumeike/TornadoNet-App
+cd TornadoNet-App
 pip install -r requirements.txt
 ```
 

@@ -178,4 +178,4 @@ This work was supported by the Center for Risk-Based Community Resilience Planni
 
 ## License
 
-See [LICENSE][LICENSE] for terms. Model checkpoints and dataset are released for research use.
+See ['LICENSE'](LICENSE) for terms. Model checkpoints and dataset are released for research use.

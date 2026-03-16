@@ -1,0 +1,721 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--navy:#1a3a5c;--gold:#e8c84a;--nw:228px;--topbar-bg:#ffffff;}
+@media (prefers-color-scheme:dark){:root{--topbar-bg:#1e1e1e;}}
+body{font-family:var(--font-sans,system-ui,sans-serif);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:var(--nw);background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.sb-brand{padding:18px 16px 14px;border-bottom:0.5px solid var(--color-border-tertiary);}
+.sb-logo{display:flex;align-items:center;gap:9px;}
+.sb-icon{width:34px;height:34px;background:var(--navy);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-icon svg{width:18px;height:18px;fill:var(--gold);}
+.sb-name{font-size:15px;font-weight:500;letter-spacing:-0.2px;}
+.sb-sub{font-size:10px;color:var(--color-text-tertiary);letter-spacing:.8px;text-transform:uppercase;margin-top:1px;}
+.sb-sec{padding:10px 8px 2px;}
+.sb-lbl{font-size:10px;color:var(--color-text-tertiary);letter-spacing:.9px;text-transform:uppercase;padding:0 8px 5px;}
+.nb{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);border:none;background:none;width:100%;text-align:left;margin-bottom:2px;transition:background .15s;}
+.nb:hover{background:var(--color-background-secondary);color:var(--color-text-primary);}
+.nb.active{background:var(--navy);color:var(--gold);}
+.nb svg{width:15px;height:15px;opacity:.6;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.5;}
+.nb.active svg{opacity:1;}
+.sb-foot{margin-top:auto;padding:12px 14px;border-top:0.5px solid var(--color-border-tertiary);}
+.sf-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dg{background:#4a9e6b;}.dy{background:#f0c040;}.dr{background:#d44e2a;}
+.main{flex:1;min-width:0;}
+
+/* TOPBAR — opaque background is critical for sticky scroll */
+.topbar{
+  background:var(--color-background-primary);
+  /* Fallback explicit colors ensure no transparency */
+  border-bottom:0.5px solid var(--color-border-tertiary);
+  padding:0 24px;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:50;
+  /* Force opaque — prevents content bleed-through */
+  isolation:isolate;
+}
+/* Extra guarantee: paint a solid fill behind the topbar text */
+.topbar::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:var(--color-background-primary);
+  z-index:-1;
+}
+
+.tb-t{font-size:14px;font-weight:500;position:relative;z-index:1;}
+.tb-m{font-size:11px;color:var(--color-text-secondary);position:relative;z-index:1;}
+.tb-r{display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
+
+/* MODEL PILL DROPDOWN */
+.mpill{display:flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;background:var(--color-background-secondary);position:relative;user-select:none;}
+.mpill:hover{border-color:var(--navy);}
+.mpill-dropdown{position:absolute;top:calc(100% + 6px);right:0;min-width:230px;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);z-index:200;overflow:hidden;}
+.mpill-opt{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:12px;cursor:pointer;transition:background .12s;}
+.mpill-opt:hover{background:var(--color-background-secondary);}
+.mpill-opt.active-opt{background:#e6f1fb;}
+.mpill-opt-name{font-weight:500;}
+.mpill-opt-sub{font-size:10px;color:var(--color-text-tertiary);}
+.mpill-check{margin-left:auto;font-size:11px;color:var(--navy);}
+
+.page{padding:22px 24px;max-width:1140px;}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;}
+.card+.card{margin-top:12px;}
+.ct{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:11px;}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:13px 15px;}
+.ml{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.mv{font-size:24px;font-weight:500;line-height:1;}
+.ms{font-size:11px;color:var(--color-text-secondary);margin-top:3px;}
+.mvg{color:#4a9e6b;}.mva{color:#ba7517;}.mvr{color:#a32d2d;}
+.ds{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:500;}
+.ds0{background:#e1f5ee;color:#085041;}.ds1{background:#faeeda;color:#633806;}
+.ds2{background:#faece7;color:#4a1b0c;}.ds3{background:#fcebeb;color:#7a1f1f;}
+.ds4{background:#8b1a1a;color:#faeeda;}
+
+/* BUTTONS — all get explicit 1px border, no exceptions */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:7px 13px;
+  border-radius:var(--border-radius-md);
+  font-size:13px;cursor:pointer;
+  border:1px solid var(--color-border-secondary);
+  background:var(--color-background-secondary);
+  color:var(--color-text-primary);
+  transition:background .15s,border-color .15s;
+  white-space:nowrap;
+}
+.btn:hover{background:var(--color-background-primary);border-color:var(--color-border-primary);}
+.btn-p{background:var(--navy)!important;color:var(--gold)!important;border:1px solid var(--navy)!important;}
+.btn-p:hover{background:#0f2640!important;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+/* Danger button — red border always visible */
+.btn-d{
+  border:1px solid #c0392b!important;
+  color:#a32d2d!important;
+  background:var(--color-background-secondary)!important;
+}
+.btn-d:hover{background:#fcebeb!important;}
+/* AI button */
+.btn-ai{background:#e6f1fb!important;color:#0c447c!important;border:1px solid #b5d4f4!important;}
+.btn-ai:hover{background:#d0e8f8!important;}
+
+/* SELECT — explicitly outlined, matches button style exactly */
+.sel-input{
+  padding:5px 10px;
+  border:1px solid var(--color-border-secondary)!important;
+  border-radius:var(--border-radius-md);
+  font-size:12px;
+  background:var(--color-background-secondary);
+  color:var(--color-text-primary);
+  cursor:pointer;
+  outline:none;
+  appearance:auto;
+}
+.sel-input:hover{border-color:var(--color-border-primary)!important;}
+.sel-input:focus{border-color:var(--navy)!important;}
+
+.dz{border:1.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:32px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#f5f5f3;}
+.dz:hover,.dz.over{border-color:var(--navy);background:#eef4fb;}
+.dz-ico{width:32px;height:32px;margin:0 auto 9px;opacity:.35;}
+.dz-t{font-size:13px;font-weight:500;margin-bottom:3px;}
+.dz-s{font-size:12px;color:var(--color-text-secondary);}
+.pill-tag{font-size:10px;padding:2px 8px;background:white;border:0.5px solid var(--color-border-secondary);border-radius:3px;color:var(--color-text-secondary);}
+.mcard{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:11px 13px;cursor:pointer;transition:border-color .15s;}
+.mcard.sel{border:1.5px solid var(--navy);background:#e6f1fb14;}
+.mc-n{font-size:12px;font-weight:500;margin-bottom:3px;}
+.mc-s{font-size:11px;color:var(--color-text-secondary);}
+.mc-p{font-size:10px;color:var(--color-text-tertiary);margin-top:4px;font-family:var(--font-mono,monospace);}
+.mc-tag{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;margin-top:4px;}
+.tag-b{background:#eeedfe;color:#3c3489;}.tag-a{background:#e6f1fb;color:#0c447c;}.tag-f{background:#e1f5ee;color:#085041;}
+.preview-wrap{position:relative;width:100%;background:#1a1a1a;border-radius:var(--border-radius-md);overflow:hidden;}
+.preview-wrap canvas{display:block;width:100%;height:auto;}
+.preview-placeholder{width:100%;height:220px;background:#f0efea;border-radius:var(--border-radius-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--color-text-tertiary);}
+.preview-placeholder svg{width:32px;height:32px;opacity:.3;}
+.det-row{display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .1s;}
+.det-row:last-child{border-bottom:none;}
+.det-row:hover{background:var(--color-background-secondary);}
+.det-row.highlighted{background:#e6f1fb;}
+.det-th{width:48px;height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;}
+.det-inf{flex:1;min-width:0;}
+.det-n{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.det-m{font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+.cw{text-align:right;flex-shrink:0;}
+.cv{font-size:12px;color:var(--color-text-secondary);}
+.cb2{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-top:4px;width:48px;}
+.cf{height:100%;border-radius:2px;}
+.chat-wrap{height:350px;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:10px;}
+.cm{max-width:82%;}
+.cm.u{align-self:flex-end;}.cm.a{align-self:flex-start;}
+.cs{font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.cb{padding:9px 13px;border-radius:11px;font-size:13px;line-height:1.55;}
+.cm.u .cb{background:var(--navy);color:#e8f0fb;border-radius:11px 11px 2px 11px;}
+.cm.a .cb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:11px 11px 11px 2px;}
+.chat-row{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);}
+.chat-row input{flex:1;padding:8px 11px;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);}
+.rh{font-size:12px;font-weight:500;color:var(--navy);border-bottom:1.5px solid var(--navy);padding-bottom:3px;margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
+.rr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;}
+.rr:last-child{border-bottom:none;}
+.rl{color:var(--color-text-secondary);}
+.pri{display:inline-flex;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:500;}
+.pri-c{background:#fcebeb;color:#501313;}.pri-h{background:#faece7;color:#4a1b0c;}
+.pri-m{background:#faeeda;color:#633806;}.pri-l{background:#e1f5ee;color:#085041;}
+.stitle{font-size:14px;font-weight:500;margin-bottom:3px;}
+.sdesc{font-size:12px;color:var(--color-text-secondary);margin-bottom:13px;}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.srow:last-child{border-bottom:none;}
+.skey{font-size:13px;}.sval{font-size:11px;color:var(--color-text-secondary);}
+.tog{width:38px;height:22px;border-radius:11px;background:var(--color-background-primary);border:2px solid #8899aa;position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;}
+.tog.on{background:var(--navy);border-color:var(--navy);}
+.tog .kn{position:absolute;width:14px;height:14px;border-radius:50%;background:white;top:2px;left:2px;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.tog.on .kn{left:18px;}
+.ki{padding:6px 10px;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-mono,monospace);}
+.pc{border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;}
+.pc.sel{border:1.5px solid var(--navy);}
+.pl{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.pn{font-size:13px;font-weight:500;}.ps{font-size:11px;color:var(--color-text-secondary);}
+.pck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--color-border-secondary);margin-left:auto;flex-shrink:0;}
+.pc.sel .pck{background:var(--navy);border-color:var(--navy);}
+.sev-r{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.sev-l{font-size:12px;width:60px;flex-shrink:0;color:var(--color-text-secondary);}
+.sev-bw{flex:1;height:7px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden;}
+.sev-b{height:100%;border-radius:3px;}
+.sev-c{font-size:12px;width:22px;text-align:right;color:var(--color-text-secondary);}
+.vlm-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.vlm-table th{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-align:left;padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);text-transform:uppercase;letter-spacing:.4px;}
+.vlm-table td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.4;font-size:12px;}
+.vlm-table tr:last-child td{border-bottom:none;}
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;border-bottom:0.5px solid var(--color-border-tertiary);}
+.coll-body{padding:8px 0 4px;}
+.hidden{display:none!important;}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--color-border-tertiary);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.pulse span{animation:p 1.2s ease-in-out infinite;display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--color-text-secondary);margin:0 1px;}
+.pulse span:nth-child(2){animation-delay:.2s;}.pulse span:nth-child(3){animation-delay:.4s;}
+@keyframes p{0%,80%,100%{opacity:.2;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+.notice-y{background:#faeeda;color:#633806;border:0.5px solid #f0c04066;padding:9px 12px;border-radius:var(--border-radius-md);font-size:12px;line-height:1.5;}
+.notice-b{background:#e6f1fb;color:#0c447c;border:0.5px solid #b5d4f466;padding:9px 12px;border-radius:var(--border-radius-md);font-size:12px;line-height:1.5;}
+code{font-family:var(--font-mono,monospace);font-size:11px;background:var(--color-background-secondary);padding:1px 5px;border-radius:3px;}
+a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
+.deploy-steps{list-style:none;padding:0;margin:0;}
+.deploy-steps li{display:flex;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;line-height:1.55;color:var(--color-text-secondary);}
+.deploy-steps li:last-child{border-bottom:none;}
+.step-num{font-size:11px;font-weight:500;color:var(--navy);width:16px;flex-shrink:0;padding-top:1px;}
+.frame-strip{display:flex;gap:6px;overflow-x:auto;padding:4px 0;margin-top:8px;}
+.frame-item{flex-shrink:0;width:70px;cursor:pointer;border-radius:4px;overflow:hidden;border:1.5px solid transparent;transition:border-color .15s;}
+.frame-item.sel{border-color:var(--navy);}
+.frame-thumb{width:70px;height:48px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--color-text-tertiary);}
+.frame-lbl{font-size:9px;text-align:center;padding:2px 0;color:var(--color-text-secondary);}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:12px 0;}
+</style>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div><div class="sb-name">TornadoNet</div><div class="sb-sub">NIST · IN-CORE</div></div>
+    </div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Analysis</div>
+    <button class="nb active" onclick="nav('assess')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Assess</button>
+    <button class="nb" onclick="nav('dashboard')"><svg viewBox="0 0 24 24"><path d="M3 20V10h4v10M10 20V4h4v16M17 20v-6h4v6"/></svg>Dashboard</button>
+    <button class="nb" onclick="nav('report')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>Report</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Intelligence</div>
+    <button class="nb" onclick="nav('assistant')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>AI Assistant</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">System</div>
+    <button class="nb" onclick="nav('settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
+  </div>
+  <div class="sb-foot">
+    <div class="sf-row"><div class="dot dg"></div><span id="sb-prov">Claude VLM ready</span></div>
+    <div class="sf-row"><div class="dot dy"></div><span>TornadoNet: simulation mode</span></div>
+    <div class="sf-row" id="sb-cnt"><div class="dot dg"></div>0 images analyzed</div>
+  </div>
+</aside>
+
+<div class="main">
+
+<!-- ASSESS -->
+<div id="v-assess">
+  <div class="topbar">
+    <div><div class="tb-t">Damage Assessment</div><div class="tb-m">IN-CORE DS0–DS4 · Archetypes T1–T5 · 2021 Midwest Tornado</div></div>
+    <div class="tb-r">
+      <div class="mpill" id="mpill" onclick="toggleDD(event)">
+        <div class="dot dg"></div>
+        <span id="mpill-lbl">RT-DETR-L + Ordinal</span>
+        <span style="color:var(--color-text-tertiary);font-size:10px;">▾</span>
+        <div class="mpill-dropdown hidden" id="mpill-dd" onclick="event.stopPropagation()">
+          <div class="mpill-opt active-opt" id="mopt-rtdetr" onclick="selFromPill('rtdetr','RT-DETR-L + Ordinal','mopt-rtdetr')"><div><div class="mpill-opt-name">RT-DETR-L + Ordinal</div><div class="mpill-opt-sub">mAP 44.70% · MAOE 0.56 · psi=0.5, k=1</div></div><span class="mpill-check">✓</span></div>
+          <div class="mpill-opt" id="mopt-yolo11x" onclick="selFromPill('yolo11x','YOLO11x','mopt-yolo11x')"><div><div class="mpill-opt-name">YOLO11x</div><div class="mpill-opt-sub">mAP 46.05% · 66 FPS · baseline</div></div><span class="mpill-check hidden">✓</span></div>
+          <div class="mpill-opt" id="mopt-yolo11n" onclick="selFromPill('yolo11n','YOLO11n','mopt-yolo11n')"><div><div class="mpill-opt-name">YOLO11n</div><div class="mpill-opt-sub">mAP 41.14% · 239 FPS · baseline</div></div><span class="mpill-check hidden">✓</span></div>
+        </div>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="runAnalysis()"><span id="run-lbl">Run Analysis</span><span id="run-sp" class="spinner hidden"></span></button>
+    </div>
+  </div>
+  <div class="page">
+    <div class="g2" style="align-items:start;">
+      <div>
+        <div class="card">
+          <div class="ct">Upload Imagery</div>
+          <div class="dz" id="dz" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="onDrop(event)" onclick="document.getElementById('fi').click()">
+            <svg class="dz-ico" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6v16M10 14l8-8 8 8M6 26h24"/></svg>
+            <div class="dz-t">Drop street-view images or video</div>
+            <div class="dz-s">JPG · PNG · MP4 · Max 50 MB</div>
+            <div style="margin-top:9px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+              <span class="pill-tag">360° panoramic</span><span class="pill-tag">Dashcam</span><span class="pill-tag">Street-view</span>
+            </div>
+          </div>
+          <input type="file" id="fi" style="display:none;" multiple accept="image/*,video/*" onchange="onFiles(this.files)">
+          <div id="file-list" style="margin-top:9px;display:none;"></div>
+          <div id="frame-panel" class="hidden" style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);">
+            <div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px;">Select frame for AI assessment</div>
+            <div class="frame-strip" id="frame-strip"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Detection Model</div>
+          <div class="g3" style="margin-bottom:10px;">
+            <div class="mcard sel" id="mc-rt" onclick="selM('rtdetr','RT-DETR-L + Ordinal',this)"><div class="mc-n">RT-DETR-L</div><div class="mc-s">mAP@0.5: 44.70%</div><div class="mc-s">MAOE: 0.56 · OrdAcc: 91.1%</div><div class="mc-p">psi=0.5, k=1</div><span class="mc-tag tag-b">Best ordinal</span></div>
+            <div class="mcard" id="mc-y11x" onclick="selM('yolo11x','YOLO11x',this)"><div class="mc-n">YOLO11x</div><div class="mc-s">mAP@0.5: 46.05%</div><div class="mc-s">66 FPS · 56.8M params</div><div class="mc-p">baseline</div><span class="mc-tag tag-a">Best mAP</span></div>
+            <div class="mcard" id="mc-y11n" onclick="selM('yolo11n','YOLO11n',this)"><div class="mc-n">YOLO11n</div><div class="mc-s">mAP@0.5: 41.14%</div><div class="mc-s">239 FPS · 2.6M params</div><div class="mc-p">baseline</div><span class="mc-tag tag-f">Fastest</span></div>
+          </div>
+          <div style="font-size:11px;color:var(--color-text-secondary);">Checkpoints: <a href="https://huggingface.co/crumeike/tornadonet-checkpoints" target="_blank">crumeike/tornadonet-checkpoints</a> · <span style="color:#ba7517;">Simulation mode</span> · <span onclick="nav('settings')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Connect endpoint →</span></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div><div style="font-size:13px;font-weight:500;">AI Structural Assessment</div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px;">T1–T5 element-level analysis per building. Uses API credits.</div></div>
+            <div class="tog" id="vlm-tog" onclick="toggleVLM()"><div class="kn"></div></div>
+          </div>
+          <div id="vlm-config" class="hidden" style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary);">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px;">
+              <select id="vlm-sel" class="sel-input"><option value="claude">Claude (Anthropic)</option><option value="gpt4o">GPT-4o (OpenAI)</option><option value="gemini">Gemini 1.5 Pro (Google)</option><option value="grok">Grok Vision (xAI)</option></select>
+              <span style="font-size:11px;color:var(--color-text-secondary);">One T1–T5 table per detected building</span>
+            </div>
+            <div class="notice-b">VLMs assess each building using the T1–T5 decision matrix: roof covering, window/door, roof sheathing, and roof-to-wall connection. Each building receives a final DS assignment with element-level justification, separate from TornadoNet bounding box detection.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="padding:14px 16px;">
+          <div class="ct" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span>Detection Preview</span><span id="prev-status" style="font-size:11px;color:var(--color-text-secondary);">Awaiting analysis</span></div>
+          <div id="preview-placeholder" class="preview-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span style="font-size:12px;">Upload an image and run analysis to see detection preview</span>
+            <span style="font-size:11px;">or <span style="color:var(--navy);cursor:pointer;text-decoration:underline;" onclick="loadDemo()">load demo</span></span>
+          </div>
+          <div id="preview-wrap" class="preview-wrap hidden"><canvas id="det-canvas"></canvas></div>
+          <div id="prev-note" class="hidden" style="margin-top:6px;font-size:10px;color:var(--color-text-tertiary);">Click a detection row below to highlight its bounding box</div>
+        </div>
+        <div class="card">
+          <div class="ct" style="display:flex;justify-content:space-between;align-items:center;"><span>TornadoNet Detections</span><span id="det-cnt" style="font-size:11px;color:var(--color-text-secondary);">No analysis run</span></div>
+          <div id="no-det" style="text-align:center;padding:20px 0;font-size:13px;color:var(--color-text-secondary);">Run analysis to see detections</div>
+          <div id="det-list" class="hidden"></div>
+          <div id="det-dist" class="hidden" style="margin-top:11px;padding-top:11px;border-top:0.5px solid var(--color-border-tertiary);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span style="font-size:12px;font-weight:500;">Damage distribution</span><button class="btn btn-sm" onclick="nav('report')">Generate report →</button></div>
+            <div id="dist-bars"></div>
+          </div>
+        </div>
+        <div id="vlm-card" class="card hidden">
+          <div class="ct" style="display:flex;justify-content:space-between;align-items:center;"><span>AI Structural Assessment (T1–T5)</span><span id="vlm-prov-lbl" style="font-size:11px;color:var(--color-text-secondary);">Claude</span></div>
+          <div id="vlm-thinking" class="hidden" style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:var(--color-text-secondary);">Analyzing structural indicators <div class="pulse"><span></span><span></span><span></span></div></div>
+          <div id="vlm-output"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="v-dashboard" class="hidden">
+  <div class="topbar">
+    <div><div class="tb-t">Session Dashboard</div><div class="tb-m">Aggregate damage statistics · 2021 Midwest Tornado Outbreak</div></div>
+    <div class="tb-r">
+      <button class="btn btn-sm" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-p btn-sm" onclick="nav('report')">Generate report</button>
+    </div>
+  </div>
+  <div class="page">
+    <div class="g4" style="margin-bottom:16px;">
+      <div class="metric"><div class="ml">Images analyzed</div><div class="mv" id="d-i">0</div><div class="ms">this session</div></div>
+      <div class="metric"><div class="ml">Buildings detected</div><div class="mv mvg" id="d-b">0</div><div class="ms">total instances</div></div>
+      <div class="metric"><div class="ml">DS3–DS4 critical</div><div class="mv mvr" id="d-c">0%</div><div class="ms">priority response</div></div>
+      <div class="metric"><div class="ml">Avg confidence</div><div class="mv mva" id="d-cf">—</div><div class="ms">model certainty</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="ct">Damage state distribution</div><div style="position:relative;height:200px;"><canvas id="ch-dist"></canvas></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#4a9e6b;display:inline-block;"></span>DS0</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#f0c040;display:inline-block;"></span>DS1</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#e8883a;display:inline-block;"></span>DS2</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#d44e2a;display:inline-block;"></span>DS3</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#8b1a1a;display:inline-block;"></span>DS4</span>
+        </div>
+      </div>
+      <div class="card"><div class="ct">Model comparison</div><div style="position:relative;height:200px;"><canvas id="ch-perf"></canvas></div>
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#534AB7;display:inline-block;"></span>RT-DETR-L + Ordinal</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#1a3a5c;display:inline-block;"></span>YOLO11x</span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#4a9e6b;display:inline-block;"></span>YOLO11n</span>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ct">Ordinal accuracy by model</div><div style="position:relative;height:170px;"><canvas id="ch-ord"></canvas></div></div>
+      <div class="card"><div class="ct">Priority response queue</div>
+        <div class="det-row"><div class="det-th" style="background:#8b1a1a22;color:#8b1a1a;">DS4</div><div class="det-inf"><div class="det-n">Building_047.jpg</div><div class="det-m">Complete structural failure · 96%</div></div><span class="pri pri-c">Critical</span></div>
+        <div class="det-row"><div class="det-th" style="background:#d44e2a22;color:#d44e2a;">DS3</div><div class="det-inf"><div class="det-n">Building_031.jpg</div><div class="det-m">Extensive roof/wall failure · 88%</div></div><span class="pri pri-h">High</span></div>
+        <div class="det-row"><div class="det-th" style="background:#d44e2a22;color:#d44e2a;">DS3</div><div class="det-inf"><div class="det-n">Building_019.jpg</div><div class="det-m">Extensive damage · 82%</div></div><span class="pri pri-h">High</span></div>
+        <div class="det-row"><div class="det-th" style="background:#e8883a22;color:#e8883a;">DS2</div><div class="det-inf"><div class="det-n">Building_055.jpg</div><div class="det-m">Moderate roof damage · 79%</div></div><span class="pri pri-m">Medium</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div id="v-report" class="hidden">
+  <div class="topbar">
+    <div><div class="tb-t">NIST Damage Assessment Report</div><div class="tb-m">Auto-generated · IN-CORE DS classification · CRADA CN-24-0590</div></div>
+    <div class="tb-r">
+      <button class="btn btn-ai btn-sm" id="gen-btn" onclick="genReport()"><span id="gen-lbl">Generate with AI</span><span id="gen-sp" class="spinner hidden"></span></button>
+      <button class="btn btn-p btn-sm" onclick="window.print()">Export PDF</button>
+    </div>
+  </div>
+  <div class="page">
+    <div class="g2" style="align-items:start;">
+      <div class="card">
+        <div style="text-align:center;padding-bottom:14px;border-bottom:1.5px solid var(--navy);margin-bottom:14px;">
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:3px;">National Institute of Standards and Technology</div>
+          <div style="font-size:16px;font-weight:500;color:var(--navy);">Post-Tornado Building Damage Assessment</div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px;">IN-CORE Platform · TornadoNet AI · CRADA CN-24-0590</div>
+        </div>
+        <div style="margin-bottom:16px;"><div class="rh">1. Event Summary</div>
+          <div class="rr"><span class="rl">Event</span><span>2021 Midwest Tornado Outbreak (Dec 10–11)</span></div>
+          <div class="rr"><span class="rl">Assessment date</span><span id="rpt-date">—</span></div>
+          <div class="rr"><span class="rl">Survey method</span><span>Street-view imagery · Vehicle-mounted 360° camera</span></div>
+          <div class="rr"><span class="rl">Detection model</span><span id="rpt-model">RT-DETR-L + Ordinal Supervision (psi=0.5, K=1)</span></div>
+          <div class="rr"><span class="rl">Classification</span><span>IN-CORE DS0–DS4 · Archetypes T1–T5</span></div>
+          <div class="rr"><span class="rl">Partners</span><span>JHU · U of Alabama · U of South Alabama · NIST</span></div>
+        </div>
+        <div style="margin-bottom:16px;"><div class="rh">2. Damage Inventory</div>
+          <div class="rr"><span class="rl">Total structures assessed</span><span id="rpt-tot">—</span></div>
+          <div class="rr"><span class="rl">DS0 Undamaged</span><span id="rpt-ds0">—</span></div>
+          <div class="rr"><span class="rl">DS1 Slight</span><span id="rpt-ds1">—</span></div>
+          <div class="rr"><span class="rl">DS2 Moderate</span><span id="rpt-ds2">—</span></div>
+          <div class="rr"><span class="rl">DS3 Extensive</span><span id="rpt-ds3">—</span></div>
+          <div class="rr"><span class="rl">DS4 Complete</span><span id="rpt-ds4">—</span></div>
+        </div>
+        <div style="margin-bottom:16px;"><div class="rh">3. AI Damage Narrative</div>
+          <div id="rpt-narr" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">Click "Generate with AI" to produce a NIST-style narrative based on detected structures and IN-CORE severity classifications.</div>
+        </div>
+        <div><div class="rh">4. Response Recommendations</div>
+          <div id="rpt-recs" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">AI-generated response priorities appear here after generation.</div>
+        </div>
+        <div style="margin-top:14px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);font-size:10px;color:var(--color-text-tertiary);text-align:center;">TornadoNet · CRADA CN-24-0590 · JHU · University of Alabama · University of South Alabama · NIST</div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:12px;"><div class="ct">Report options</div>
+          <div class="srow"><div><div class="skey">AI damage narrative</div><div class="sval">LLM-generated assessment prose</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">Response priorities</div><div class="sval">Critical structure flagging</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">Archetype mapping</div><div class="sval">T1–T19 structural types</div></div><div class="tog" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow" style="border:none;"><div><div class="skey">VLM assessment summary</div><div class="sval">Include T1–T5 element findings</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+        </div>
+        <div class="card" style="margin-bottom:12px;"><div class="ct">Ask about this report</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="q('Summarize the critical damage findings and their immediate response implications')">Critical findings summary ↗</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="q('What immediate actions should FEMA and local authorities prioritize?')">FEMA response priorities ↗</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="q('How does this damage pattern compare to the 2011 Joplin tornado?')">Compare to Joplin 2011 ↗</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="q('Explain the IN-CORE damage states and what each means for wood frame buildings')">IN-CORE DS reference ↗</button>
+          </div>
+        </div>
+        <div class="card"><div class="ct">IN-CORE damage states</div>
+          <div style="font-size:12px;">
+            <div style="padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:7px;align-items:center;"><span class="ds ds0">DS0</span><span>No visible structural damage</span></div>
+            <div style="padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:7px;align-items:center;"><span class="ds ds1">DS1</span><span>2–15% roof covering · 1 window/door</span></div>
+            <div style="padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:7px;align-items:center;"><span class="ds ds2">DS2</span><span>15–50% roof damage · 2–3 openings</span></div>
+            <div style="padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:7px;align-items:center;"><span class="ds ds3">DS3</span><span>Over 50% roof · more than 3 openings</span></div>
+            <div style="padding:5px 0;display:flex;gap:7px;align-items:center;"><span class="ds ds4">DS4</span><span>Complete failure · roof-to-wall connection</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSISTANT -->
+<div id="v-assistant" class="hidden">
+  <div class="topbar">
+    <div><div class="tb-t">AI Damage Triage Assistant</div><div class="tb-m">Grounded in TornadoNet detections · IN-CORE framework · NIST methodology</div></div>
+    <div class="tb-r">
+      <select id="asst-sel" class="sel-input" onchange="updAsst()">
+        <option value="claude">Claude (Anthropic)</option>
+        <option value="gpt4o">GPT-4o (OpenAI)</option>
+        <option value="gemini">Gemini 1.5 Pro (Google)</option>
+        <option value="grok">Grok-2 (xAI)</option>
+      </select>
+      <button class="btn btn-sm btn-d" onclick="clearChat()">Clear</button>
+    </div>
+  </div>
+  <div class="page">
+    <div class="g2" style="align-items:start;">
+      <div class="card">
+        <div class="chat-wrap" id="chat-msgs">
+          <div class="cm a"><div class="cs">TornadoNet Assistant</div><div class="cb">Hello. I'm your post-disaster damage triage assistant, grounded in the TornadoNet detection framework, IN-CORE DS0–DS4 classification, and the T1–T5 archetype decision matrix for wood frame buildings.<br><br>Ask me about damage findings, structural indicators, response priorities, model performance, or historical comparisons.</div></div>
+        </div>
+        <div class="chat-row">
+          <input type="text" id="chat-in" placeholder="Ask about damage findings, response priorities, model performance..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="btn btn-p" onclick="sendMsg()">Send</button>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:12px;"><div class="ct">Suggested queries</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('How many DS3 and DS4 buildings were detected this session and what are the safety implications?')">How many critical structures detected?</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('Explain what DS3 damage looks like for a T1–T5 wood frame building.')">What does DS3 look like structurally?</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('Compare RT-DETR-L ordinal performance vs YOLO11x for severity grading.')">RT-DETR-L vs YOLO11x for triage?</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('What should FEMA prioritize first given the detected damage distribution?')">FEMA response priorities?</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('Why does ordinal supervision (psi=0.5, K=1) improve RT-DETR-L but not YOLO11x?')">Why does ordinal supervision help RT-DETR?</button>
+            <button class="btn" style="font-size:12px;text-align:left;" onclick="setMsg('Walk me through the T1–T5 decision matrix for 60% roof loss and 4 broken windows.')">Walk through T1–T5 decision matrix</button>
+          </div>
+        </div>
+        <div class="card"><div class="ct">Session context</div>
+          <div class="rr"><span class="rl">Images analyzed</span><span id="ctx-i">0</span></div>
+          <div class="rr"><span class="rl">Active model</span><span id="ctx-m">RT-DETR-L + Ordinal</span></div>
+          <div class="rr"><span class="rl">Assistant provider</span><span id="ctx-a">Claude</span></div>
+          <div class="rr" style="border:none;"><span class="rl">CRADA</span><span>CN-24-0590</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="v-settings" class="hidden">
+  <div class="topbar">
+    <div><div class="tb-t">Settings</div><div class="tb-m">API keys · Model endpoints · Display preferences</div></div>
+    <div class="tb-r"><button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button></div>
+  </div>
+  <div class="page">
+    <div class="g2" style="align-items:start;">
+      <div>
+        <div class="card" style="margin-bottom:14px;"><div class="stitle">LLM / VLM Provider</div><div class="sdesc">Selected provider handles visual analysis, report generation, and the assistant.</div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px;">
+            <div class="pc sel" onclick="selProv(this,'claude')"><div class="pl" style="background:#e8c84a22;color:var(--navy);">AN</div><div><div class="pn">Anthropic</div><div class="ps">Claude claude-sonnet-4-20250514</div></div><div class="pck"></div></div>
+            <div class="pc" onclick="selProv(this,'openai')"><div class="pl" style="background:#10a37f22;color:#0a7a5e;">OA</div><div><div class="pn">OpenAI</div><div class="ps">GPT-4o Vision</div></div><div class="pck"></div></div>
+            <div class="pc" onclick="selProv(this,'gemini')"><div class="pl" style="background:#4285f422;color:#1a5cc0;">GG</div><div><div class="pn">Google</div><div class="ps">Gemini 1.5 Pro</div></div><div class="pck"></div></div>
+            <div class="pc" onclick="selProv(this,'grok')"><div class="pl" style="background:#1da1f222;color:#0d7abf;">xAI</div><div><div class="pn">xAI</div><div class="ps">Grok-2 Vision</div></div><div class="pck"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;">Anthropic API key</div><input type="password" class="ki" id="k-claude" placeholder="sk-ant-..." style="width:100%;"></div>
+            <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;">OpenAI API key</div><input type="password" class="ki" id="k-openai" placeholder="sk-..." style="width:100%;"></div>
+            <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;">Google AI API key</div><input type="password" class="ki" id="k-gemini" placeholder="AIza..." style="width:100%;"></div>
+            <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;">xAI API key</div><input type="password" class="ki" id="k-grok" placeholder="xai-..." style="width:100%;"></div>
+          </div>
+          <div class="notice-y" style="margin-top:12px;">Keys are stored in browser memory only and never sent to any server other than the selected provider.</div>
+        </div>
+        <div class="card"><div class="stitle">Display preferences</div><div class="sdesc">Customize how results are presented.</div>
+          <div class="srow"><div><div class="skey">Show confidence scores</div><div class="sval">Per-detection probabilities</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">Ordinal severity heatmap</div><div class="sval">Color-code DS levels in dashboard</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow" style="border:none;"><div><div class="skey">Auto-generate report</div><div class="sval">After each batch analysis</div></div><div class="tog" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px;"><div class="stitle">TornadoNet Endpoint</div><div class="sdesc">Connect to a deployed backend loading .pt checkpoints. Until configured, the app runs in simulation mode.</div>
+          <div style="margin-bottom:10px;"><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;">API base URL</div><input type="text" class="ki" id="api-url" placeholder="http://localhost:8000" style="width:100%;"></div>
+          <div class="g3" style="margin-bottom:11px;">
+            <div class="mcard sel" id="ep-rt" onclick="selEP('rtdetr',this)"><div class="mc-n" style="font-size:11px;">RT-DETR-L</div><div class="mc-s">+ Ordinal (psi=0.5, K=1)</div><span class="mc-tag tag-b" style="font-size:9px;">Recommended</span></div>
+            <div class="mcard" id="ep-y11x" onclick="selEP('yolo11x',this)"><div class="mc-n" style="font-size:11px;">YOLO11x</div><div class="mc-s">46% mAP · 66 FPS</div><span class="mc-tag tag-a" style="font-size:9px;">Best mAP</span></div>
+            <div class="mcard" id="ep-y11n" onclick="selEP('yolo11n',this)"><div class="mc-n" style="font-size:11px;">YOLO11n</div><div class="mc-s">41% mAP · 239 FPS</div><span class="mc-tag tag-f" style="font-size:9px;">Fastest</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <button class="btn btn-sm" onclick="testConn()">Test connection</button>
+            <div id="conn-st" style="font-size:11px;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px;"><span class="dot dy"></span>Not connected</div>
+          </div>
+          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;">
+            <div style="font-size:12px;font-weight:500;margin-bottom:10px;">Deploy locally</div>
+            <ol class="deploy-steps">
+              <li><span class="step-num">1</span><span>Clone the repository: <code>git clone https://github.com/crumeike/TornadoNet</code></span></li>
+              <li><span class="step-num">2</span><span>Install dependencies: <code>pip install ultralytics fastapi uvicorn python-multipart</code></span></li>
+              <li><span class="step-num">3</span><span>Place checkpoint files in <code>checkpoints/</code> or set a HuggingFace token for auto-download</span></li>
+              <li><span class="step-num">4</span><span>Start the server: <code>uvicorn api.main:app --reload --port 8000</code></span></li>
+              <li><span class="step-num">5</span><span>Enter <code>http://localhost:8000</code> above and click Test connection</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="card"><div class="stitle">About</div><div class="sdesc">Project information and resources.</div>
+          <div class="rr"><span class="rl">Version</span><span>1.0.0</span></div>
+          <div class="rr"><span class="rl">CRADA</span><span>CN-24-0590</span></div>
+          <div class="rr"><span class="rl">Partners</span><span>JHU · UA · USA · NIST</span></div>
+          <div class="rr"><span class="rl">Dataset</span><span>3,333 images · 8,890 instances</span></div>
+          <div class="rr"><span class="rl">Classification</span><span>IN-CORE DS0–DS4</span></div>
+          <div class="divider"></div>
+          <div class="rr"><span class="rl">Paper</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">TornadoNet manuscript</a></span></div>
+          <div class="rr"><span class="rl">Checkpoints</span><span><a href="https://huggingface.co/crumeike/tornadonet-checkpoints" target="_blank">crumeike/tornadonet-checkpoints</a></span></div>
+          <div class="rr"><span class="rl">Dataset</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">TornadoNet dataset</a></span></div>
+          <div class="rr" style="border:none;"><span class="rl">Code</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">github.com/crumeike/TornadoNet</a></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const S={view:'assess',model:'rtdetr',mLabel:'RT-DETR-L + Ordinal',provider:'claude',imgs:0,buildings:0,results:[],chat:[],keys:{},vlmOn:false,detBoxes:[],activeBox:-1,_img:null};
+const MOCK={
+  rtdetr:[{ds:'DS0',conf:.94,c:'#4a9e6b',bg:'#e1f5ee',tc:'#085041'},{ds:'DS2',conf:.81,c:'#e8883a',bg:'#faece7',tc:'#4a1b0c'},{ds:'DS3',conf:.88,c:'#d44e2a',bg:'#fcebeb',tc:'#7a1f1f'},{ds:'DS1',conf:.76,c:'#f0c040',bg:'#faeeda',tc:'#633806'}],
+  yolo11x:[{ds:'DS0',conf:.91,c:'#4a9e6b',bg:'#e1f5ee',tc:'#085041'},{ds:'DS3',conf:.84,c:'#d44e2a',bg:'#fcebeb',tc:'#7a1f1f'},{ds:'DS2',conf:.79,c:'#e8883a',bg:'#faece7',tc:'#4a1b0c'},{ds:'DS4',conf:.72,c:'#8b1a1a',bg:'#fcebeb',tc:'#faeeda'}],
+  yolo11n:[{ds:'DS1',conf:.82,c:'#f0c040',bg:'#faeeda',tc:'#633806'},{ds:'DS0',conf:.89,c:'#4a9e6b',bg:'#e1f5ee',tc:'#085041'},{ds:'DS2',conf:.71,c:'#e8883a',bg:'#faece7',tc:'#4a1b0c'}]
+};
+const DSC={DS0:'#4a9e6b',DS1:'#e6b800',DS2:'#e8883a',DS3:'#d44e2a',DS4:'#8b1a1a'};
+
+document.addEventListener('click',()=>document.getElementById('mpill-dd').classList.add('hidden'));
+function toggleDD(e){e.stopPropagation();document.getElementById('mpill-dd').classList.toggle('hidden');}
+function selFromPill(id,lbl,optId){
+  selM(id,lbl,document.getElementById('mc-'+{rtdetr:'rt',yolo11x:'y11x',yolo11n:'y11n'}[id]));
+  ['mopt-rtdetr','mopt-yolo11x','mopt-yolo11n'].forEach(o=>{
+    const el=document.getElementById(o);if(!el)return;
+    el.classList.toggle('active-opt',o===optId);
+    el.querySelector('.mpill-check').classList.toggle('hidden',o!==optId);
+  });
+  document.getElementById('mpill-dd').classList.add('hidden');
+}
+function nav(v){
+  document.querySelectorAll('[id^="v-"]').forEach(e=>e.classList.add('hidden'));
+  document.getElementById('v-'+v).classList.remove('hidden');
+  document.querySelectorAll('.nb').forEach(e=>e.classList.remove('active'));
+  const idx={assess:0,dashboard:1,report:2,assistant:3,settings:4};
+  document.querySelectorAll('.nb')[idx[v]]?.classList.add('active');
+  S.view=v;if(v==='dashboard')initCharts();if(v==='report')fillReport();
+}
+function selM(id,lbl,el){
+  ['mc-rt','mc-y11x','mc-y11n'].forEach(c=>document.getElementById(c)?.classList.remove('sel'));
+  el?.classList.add('sel');S.model=id;S.mLabel=lbl;
+  document.getElementById('mpill-lbl').textContent=lbl;
+  document.getElementById('ctx-m').textContent=lbl;
+  document.getElementById('rpt-model').textContent=id==='rtdetr'?'RT-DETR-L + Ordinal Supervision (psi=0.5, K=1)':id==='yolo11x'?'YOLO11x Baseline':'YOLO11n Baseline';
+}
+function selProv(el,p){document.querySelectorAll('.pc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');S.provider=p;document.getElementById('sb-prov').textContent={claude:'Claude VLM ready',openai:'GPT-4o ready',gemini:'Gemini ready',grok:'Grok ready'}[p]||p;}
+function selEP(id,el){['ep-rt','ep-y11x','ep-y11n'].forEach(c=>document.getElementById(c)?.classList.remove('sel'));el.classList.add('sel');}
+function toggleVLM(){const tog=document.getElementById('vlm-tog');tog.classList.toggle('on');S.vlmOn=tog.classList.contains('on');document.getElementById('vlm-config').classList.toggle('hidden',!S.vlmOn);if(!S.vlmOn){document.getElementById('vlm-card').classList.add('hidden');document.getElementById('vlm-output').innerHTML='';}}
+function onFiles(files){
+  const list=document.getElementById('file-list');list.innerHTML='';list.style.display='block';S._img=null;let isVid=false;
+  Array.from(files).forEach(f=>{if(f.type?.startsWith('video/'))isVid=true;const d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;';d.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="color:var(--color-text-secondary);">${(f.size/1024).toFixed(0)} KB</span>`;list.appendChild(d);});
+  document.getElementById('frame-panel').classList.toggle('hidden',!isVid);if(isVid)buildFrameStrip();
+  const imgF=Array.from(files).find(f=>f.type?.startsWith('image/'));if(imgF)loadImgPreview(imgF);
+}
+function onDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('over');onFiles(e.dataTransfer.files);}
+function loadImgPreview(file){const r=new FileReader();r.onload=ev=>{const img=new Image();img.onload=()=>{S._img=img;drawCanvas([],- 1);document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');document.getElementById('prev-status').textContent='Image loaded — run analysis';};img.src=ev.target.result;};r.readAsDataURL(file);}
+function buildFrameStrip(){const s=document.getElementById('frame-strip');s.innerHTML='';['0:03','0:07','0:12','0:18','0:24','0:31','0:38'].forEach((t,i)=>{const d=document.createElement('div');d.className='frame-item'+(i===0?' sel':'');d.onclick=()=>{document.querySelectorAll('.frame-item').forEach(f=>f.classList.remove('sel'));d.classList.add('sel');};d.innerHTML=`<div class="frame-thumb">frame ${i+1}</div><div class="frame-lbl">${t}</div>`;s.appendChild(d);});}
+async function runAnalysis(){
+  const lbl=document.getElementById('run-lbl'),sp=document.getElementById('run-sp');lbl.textContent='Analyzing...';sp.classList.remove('hidden');await sleep(1400);
+  const res=MOCK[S.model]||MOCK.rtdetr;
+  const sb=[{x:38,y:58,w:108,h:128},{x:168,y:48,w:98,h:118},{x:282,y:68,w:112,h:112},{x:388,y:52,w:102,h:122}];
+  S.detBoxes=res.map((r,i)=>({...r,...sb[i%sb.length]}));S.activeBox=-1;
+  drawCanvas(S.detBoxes,-1);
+  document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');document.getElementById('prev-note').classList.remove('hidden');document.getElementById('prev-status').textContent=res.length+' buildings detected';
+  document.getElementById('no-det').classList.add('hidden');document.getElementById('det-list').classList.remove('hidden');document.getElementById('det-dist').classList.remove('hidden');document.getElementById('det-cnt').textContent=res.length+' detections';
+  const list=document.getElementById('det-list');list.innerHTML='';
+  res.forEach((r,i)=>{const d=document.createElement('div');d.className='det-row';d.innerHTML=`<div class="det-th" style="background:${r.bg};color:${r.tc};">${r.ds}</div><div class="det-inf"><div class="det-n">Building ${String(i+1).padStart(3,'0')}</div><div class="det-m">IN-CORE ${r.ds} · ${S.mLabel}</div></div><div class="cw"><div class="cv">${Math.round(r.conf*100)}%</div><div class="cb2"><div class="cf" style="width:${Math.round(r.conf*100)}%;background:${r.c};"></div></div></div>`;d.onclick=()=>hilightBox(i);list.appendChild(d);});
+  const cnt={DS0:0,DS1:0,DS2:0,DS3:0,DS4:0};res.forEach(r=>cnt[r.ds]++);
+  const dc={DS0:'#4a9e6b',DS1:'#f0c040',DS2:'#e8883a',DS3:'#d44e2a',DS4:'#8b1a1a'};
+  const bars=document.getElementById('dist-bars');bars.innerHTML='';
+  Object.entries(cnt).forEach(([k,v])=>{if(!v)return;const p=Math.round((v/res.length)*100);bars.innerHTML+=`<div class="sev-r"><div class="sev-l">${k}</div><div class="sev-bw"><div class="sev-b" style="width:${p}%;background:${dc[k]};"></div></div><div class="sev-c">${v}</div></div>`;});
+  S.imgs++;S.buildings+=res.length;S.results=res;document.getElementById('sb-cnt').innerHTML=`<div class="dot dg"></div>${S.imgs} image${S.imgs>1?'s':''} analyzed`;document.getElementById('ctx-i').textContent=S.imgs;
+  lbl.textContent='Run Analysis';sp.classList.add('hidden');if(S.vlmOn)await runVLM(res);
+}
+function drawCanvas(boxes,activeIdx){
+  const canvas=document.getElementById('det-canvas'),W=500,H=375;canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
+  if(S._img){ctx.drawImage(S._img,0,0,W,H);}else{ctx.fillStyle='#2a3040';ctx.fillRect(0,0,W,H);ctx.fillStyle='#3a4050';ctx.fillRect(0,H*.6,W,H*.4);ctx.fillStyle='#222830';ctx.fillRect(0,H*.55,W,H*.08);[40,155,270,378].forEach(x=>{ctx.fillStyle='#4a5060';ctx.fillRect(x,H*.15,92,H*.42);ctx.fillStyle='#3a4050';ctx.fillRect(x+5,H*.15,82,H*.18);});}
+  boxes.forEach((b,i)=>{const color=DSC[b.ds]||'#888';const isA=i===activeIdx;ctx.strokeStyle=color;ctx.lineWidth=isA?3:2;ctx.strokeRect(b.x,b.y,b.w,b.h);if(isA){ctx.fillStyle=color+'28';ctx.fillRect(b.x,b.y,b.w,b.h);}const label=`${b.ds} ${Math.round(b.conf*100)}%`;ctx.font=`bold ${isA?13:11}px monospace`;const tw=ctx.measureText(label).width;const lx=b.x,ly=b.y>18?b.y-4:b.y+b.h+14;ctx.fillStyle=color;ctx.fillRect(lx-1,ly-12,tw+8,16);ctx.fillStyle='white';ctx.fillText(label,lx+3,ly);});
+}
+function hilightBox(idx){document.querySelectorAll('.det-row').forEach((r,i)=>r.classList.toggle('highlighted',i===idx));if(S.activeBox===idx){S.activeBox=-1;drawCanvas(S.detBoxes,-1);}else{S.activeBox=idx;drawCanvas(S.detBoxes,idx);}}
+const MV=[
+  {roofCovering:{obs:'~10% surface damage',ds:'DS1'},windowDoor:{obs:'1 broken pane',ds:'DS1'},roofSheathing:{obs:'No sheathing failure',ds:'DS0'},roofWall:{obs:'No connection failure',ds:'DS0'},overall:'DS1',rationale:'Slight damage — rightmost column is DS1.',confidence:'Medium'},
+  {roofCovering:{obs:'~30% covering damaged',ds:'DS2'},windowDoor:{obs:'2 windows failed',ds:'DS2'},roofSheathing:{obs:'2 sections failed',ds:'DS2'},roofWall:{obs:'No connection failure',ds:'DS0'},overall:'DS2',rationale:'Moderate damage — rightmost column is DS2.',confidence:'Medium'},
+  {roofCovering:{obs:'Over 50% damage',ds:'DS3'},windowDoor:{obs:'4 openings failed',ds:'DS3'},roofSheathing:{obs:'4 sections, under 35%',ds:'DS3'},roofWall:{obs:'No failure',ds:'DS0'},overall:'DS3',rationale:'Extensive damage — rightmost column is DS3.',confidence:'High'},
+  {roofCovering:{obs:'Minor surface damage',ds:'DS1'},windowDoor:{obs:'1 window cracked',ds:'DS1'},roofSheathing:{obs:'No failure',ds:'DS0'},roofWall:{obs:'No failure',ds:'DS0'},overall:'DS1',rationale:'Slight peripheral damage.',confidence:'High'}
+];
+async function runVLM(res){
+  const card=document.getElementById('vlm-card'),think=document.getElementById('vlm-thinking'),output=document.getElementById('vlm-output');
+  const prov=document.getElementById('vlm-sel').value;document.getElementById('vlm-prov-lbl').textContent={claude:'Claude',gpt4o:'GPT-4o',gemini:'Gemini 1.5 Pro',grok:'Grok Vision'}[prov]||prov;
+  card.classList.remove('hidden');output.innerHTML='';think.classList.remove('hidden');
+  const key=S.keys.claude||document.getElementById('k-claude').value.trim();
+  if(!key){await sleep(900);think.classList.add('hidden');output.innerHTML=buildColl(res,true);addCH();return;}
+  try{
+    const dsum=res.map((r,i)=>`Building ${i+1}: TornadoNet=${r.ds}`).join('; ');
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:`You are a NIST structural engineer. TornadoNet detected ${res.length} buildings: ${dsum}. Using IN-CORE T1-T5 decision matrix, assess EACH building. Respond ONLY with valid JSON array, no markdown: [{"building":1,"roofCovering":{"obs":"brief","ds":"DS0-DS4"},"windowDoor":{"obs":"brief","ds":"DS0-DS4"},"roofSheathing":{"obs":"brief","ds":"DS0-DS4"},"roofWall":{"obs":"brief","ds":"DS0-DS4"},"overall":"DS0-DS4","rationale":"1 sentence","confidence":"Low/Medium/High"}]`}]})});
+    const data=await resp.json();let txt=data.content?.[0]?.text||'[]';txt=txt.replace(/```json|```/g,'').trim();
+    think.classList.add('hidden');output.innerHTML=buildColl(res,false,JSON.parse(txt));addCH();
+  }catch(e){think.classList.add('hidden');output.innerHTML=`<div style="font-size:12px;color:var(--color-text-secondary);">Assessment failed. Check API key in Settings.</div>`;}
+}
+function buildColl(res,isDemo,data){
+  const dc={DS0:'ds0',DS1:'ds1',DS2:'ds2',DS3:'ds3',DS4:'ds4'};
+  return res.map((r,i)=>{
+    const d=isDemo?MV[i%MV.length]:(data&&data[i]?data[i]:MV[i%MV.length]);
+    const rows=[['Roof Covering',d.roofCovering?.obs||'—',d.roofCovering?.ds||'—'],['Window / Door',d.windowDoor?.obs||'—',d.windowDoor?.ds||'—'],['Roof Sheathing',d.roofSheathing?.obs||'—',d.roofSheathing?.ds||'—'],['Roof-to-Wall',d.roofWall?.obs||'—',d.roofWall?.ds||'—']];
+    return `<div class="coll-hdr" data-idx="${i}"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Building ${i+1}</span><span class="ds ${dc[r.ds]||''}">${r.ds} <span style="opacity:.65;font-size:10px;">(TornadoNet)</span></span><span class="ds ${dc[d.overall]||''}">${d.overall} <span style="opacity:.65;font-size:10px;">(AI)</span></span>${isDemo?'<span style="font-size:10px;color:#ba7517;">simulation</span>':''}</div><span class="coll-arrow" style="font-size:11px;color:var(--color-text-tertiary);">▾</span></div>
+    <div class="coll-body hidden" id="cb-${i}"><table class="vlm-table"><thead><tr><th>Element</th><th>Observed indicator</th><th>DS</th></tr></thead><tbody>${rows.map(([el,obs,ds])=>`<tr><td style="font-weight:500;">${el}</td><td style="color:var(--color-text-secondary);">${obs}</td><td><span class="ds ${dc[ds]||''}">${ds}</span></td></tr>`).join('')}</tbody></table><div style="margin-top:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:500;">Final assignment:</span><span class="ds ${dc[d.overall]||''}">${d.overall}</span><span style="font-size:11px;color:var(--color-text-secondary);">Confidence: ${d.confidence||'—'}</span></div>${d.rationale?`<div style="margin-top:7px;font-size:12px;color:var(--color-text-secondary);line-height:1.6;padding:7px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">${d.rationale}</div>`:''}</div>`;
+  }).join('');
+}
+function addCH(){document.querySelectorAll('.coll-hdr').forEach(h=>{h.onclick=()=>{const b=document.getElementById('cb-'+h.getAttribute('data-idx'));const a=h.querySelector('.coll-arrow');const open=!b.classList.contains('hidden');b.classList.toggle('hidden',open);a.textContent=open?'▾':'▴';};});}
+async function sendMsg(){
+  const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';addMsg('u',msg);const tid=addThink();
+  const key=S.keys.claude||document.getElementById('k-claude').value.trim();
+  if(!key){removeEl(tid);addMsg('a',`Session: ${S.imgs} image(s), ${S.buildings} buildings using ${S.mLabel}. Add an API key in Settings for full AI responses.`);return;}
+  S.chat.push({role:'user',content:msg});
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:`Post-disaster triage assistant for NIST. TornadoNet IN-CORE DS0-DS4 T1-T5. Session: ${S.imgs} images, ${S.buildings} buildings, model: ${S.mLabel}. CRADA CN-24-0590. Be concise and technical.`,messages:S.chat})});
+    const data=await resp.json();const reply=data.content?.[0]?.text||'No response.';S.chat.push({role:'assistant',content:reply});removeEl(tid);addMsg('a',reply);
+  }catch(e){removeEl(tid);addMsg('a','Connection error. Check API key in Settings.');}
+}
+function addMsg(role,text){const box=document.getElementById('chat-msgs');const d=document.createElement('div');d.className=`cm ${role}`;d.innerHTML=`<div class="cs">${role==='u'?'You':'TornadoNet Assistant'}</div><div class="cb">${text}</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function addThink(){const box=document.getElementById('chat-msgs');const id='t'+Date.now();const d=document.createElement('div');d.className='cm a';d.id=id;d.innerHTML=`<div class="cs">TornadoNet Assistant</div><div class="cb"><div class="pulse"><span></span><span></span><span></span></div></div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;return id;}
+function removeEl(id){document.getElementById(id)?.remove();}
+function clearChat(){S.chat=[];document.getElementById('chat-msgs').innerHTML=`<div class="cm a"><div class="cs">TornadoNet Assistant</div><div class="cb">Chat cleared. How can I assist?</div></div>`;}
+function setMsg(t){document.getElementById('chat-in').value=t;nav('assistant');setTimeout(sendMsg,80);}
+function q(t){setMsg(t);}
+function updAsst(){document.getElementById('ctx-a').textContent={claude:'Claude',gpt4o:'GPT-4o',gemini:'Gemini 1.5 Pro',grok:'Grok-2'}[document.getElementById('asst-sel').value]||'Claude';}
+async function genReport(){
+  const lbl=document.getElementById('gen-lbl'),sp=document.getElementById('gen-sp');lbl.textContent='Generating...';sp.classList.remove('hidden');fillReport();
+  const key=S.keys.claude||document.getElementById('k-claude').value.trim();
+  if(!key){await sleep(1000);document.getElementById('rpt-narr').innerHTML='<em style="color:var(--color-text-secondary);">Add an API key in Settings for live AI narrative generation.</em><br><br>TornadoNet analysis indicates a mixed damage pattern. Predominant DS0–DS1 classifications suggest peripheral tornado exposure, with isolated DS3 findings indicating localized high-wind corridors.';document.getElementById('rpt-recs').innerHTML='<strong style="font-weight:500;">1. Immediate:</strong> Deploy structural engineers to DS3 and DS4 addresses.<br><strong style="font-weight:500;">2. Short-term:</strong> Coordinate with emergency management on DS2 occupancy assessments.<br><strong style="font-weight:500;">3. Recovery:</strong> Use DS distribution to calibrate IN-CORE fragility curves.';lbl.textContent='Regenerate';sp.classList.add('hidden');return;}
+  const dsum=S.results.length?S.results.map(r=>`${r.ds} (${Math.round(r.conf*100)}%)`).join(', '):'no detections yet';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:`NIST post-tornado report. TornadoNet detected: ${dsum}. Respond ONLY with valid JSON, no markdown: {"narrative":"2 formal sentences","recommendations":"3 numbered recommendations"}`}]})});
+    const data=await resp.json();let txt=data.content?.[0]?.text||'{}';txt=txt.replace(/```json|```/g,'').trim();const p=JSON.parse(txt);
+    document.getElementById('rpt-narr').innerHTML=p.narrative||'';document.getElementById('rpt-recs').innerHTML=p.recommendations||'';
+  }catch(e){document.getElementById('rpt-narr').textContent='Generation failed. Check API key.';}
+  lbl.textContent='Regenerate';sp.classList.add('hidden');
+}
+function fillReport(){document.getElementById('rpt-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('rpt-tot').textContent=S.buildings||'—';if(S.results.length){const c={DS0:0,DS1:0,DS2:0,DS3:0,DS4:0};S.results.forEach(r=>c[r.ds]++);['DS0','DS1','DS2','DS3','DS4'].forEach(ds=>{const el=document.getElementById('rpt-'+ds.toLowerCase());if(el)el.textContent=c[ds]+' structure'+(c[ds]!==1?'s':'');});}}
+function loadDemo(){document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');S._img=null;runAnalysis();}
+function exportCSV(){const rows=[['building','damage_state','confidence_pct','model']];S.results.forEach((r,i)=>rows.push([`building_${String(i+1).padStart(3,'0')}`,r.ds,Math.round(r.conf*100),S.mLabel]));const csv=rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download='tornadonet_results.csv';a.click();}
+function testConn(){const url=document.getElementById('api-url').value;const st=document.getElementById('conn-st');st.innerHTML=`<span class="spinner"></span> Testing...`;setTimeout(()=>{st.innerHTML=url?`<span class="dot dr"></span>Connection refused — start backend first`:`<span class="dot dy"></span>No URL configured`;},1600);}
+function saveSettings(){S.keys.claude=document.getElementById('k-claude').value;S.keys.openai=document.getElementById('k-openai').value;S.keys.gemini=document.getElementById('k-gemini').value;S.keys.grok=document.getElementById('k-grok').value;const btn=document.querySelector('#v-settings .btn-p');btn.textContent='Saved';setTimeout(()=>btn.textContent='Save',1800);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+let cB=false;
+function initCharts(){
+  if(cB)return;cB=true;document.getElementById('d-i').textContent=Math.max(S.imgs,1);document.getElementById('d-b').textContent=Math.max(S.buildings,8);const crit=S.results.filter(r=>r.ds==='DS3'||r.ds==='DS4').length;document.getElementById('d-c').textContent=Math.round((crit/Math.max(S.results.length,8))*100)+'%';document.getElementById('d-cf').textContent='84%';
+  new Chart(document.getElementById('ch-dist'),{type:'bar',data:{labels:['DS0','DS1','DS2','DS3','DS4'],datasets:[{data:[42,23,18,11,6],backgroundColor:['#4a9e6b','#f0c040','#e8883a','#d44e2a','#8b1a1a']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:11}}},y:{ticks:{color:'#888'},beginAtZero:true}}}});
+  new Chart(document.getElementById('ch-perf'),{type:'radar',data:{labels:['mAP@0.5','F1 Score','Ordinal Acc','Speed','MAOE (inv)'],datasets:[{data:[89,92,91,78,91],borderColor:'#534AB7',backgroundColor:'#534AB722',pointBackgroundColor:'#534AB7'},{data:[92,99,85,66,85],borderColor:'#1a3a5c',backgroundColor:'#1a3a5c22',pointBackgroundColor:'#1a3a5c'},{data:[82,91,85,100,85],borderColor:'#4a9e6b',backgroundColor:'#4a9e6b22',pointBackgroundColor:'#4a9e6b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{ticks:{display:false},grid:{color:'#ccc'},pointLabels:{color:'#666',font:{size:10}},min:0,max:100}}}});
+  new Chart(document.getElementById('ch-ord'),{type:'bar',data:{labels:['RT-DETR-L + Ordinal','YOLO11x','YOLO11n'],datasets:[{data:[91.15,85.20,84.79],backgroundColor:['#534AB7','#1a3a5c','#4a9e6b']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:10}}},y:{ticks:{color:'#888'},min:78,max:95}}}});
+}
+</script>

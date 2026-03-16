@@ -1,8 +1,8 @@
-# TornadoNet
+# TornadoNet-App
 
 **Automated street-level building damage detection for post-tornado disaster assessment.**
 
-TornadoNet is an AI-powered assessment tool combining fine-tuned object detection models with LLM-based structural analysis. It classifies building damage according to the [IN-CORE](https://incore.ncsa.illinois.edu/) DS0–DS4 framework for wood-frame residential archetypes (T1–T5), producing structured outputs suitable for NIST/FEMA reporting workflows.
+TornadoNet-App is an AI-powered assessment tool combining fine-tuned object detection models with LLM-based structural analysis. It classifies building damage according to the [IN-CORE](https://incore.ncsa.illinois.edu/) DS0–DS4 framework for wood-frame residential archetypes (T1–T5), producing structured outputs suitable for NIST/FEMA reporting workflows.
 
 Built under CRADA CN-24-0590 in collaboration with Johns Hopkins University, the University of Alabama, the University of South Alabama, and NIST.
 
@@ -178,4 +178,4 @@ This work was supported by the Center for Risk-Based Community Resilience Planni
 
 ## License
 
-See `LICENSE` for terms. Model checkpoints and dataset are released for research use.
+See [LICENSE][LICENSE] for terms. Model checkpoints and dataset are released for research use.

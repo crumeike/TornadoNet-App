@@ -25,12 +25,12 @@ Built under CRADA CN-24-0590 in collaboration with Johns Hopkins University, the
 
 All checkpoints are available on HuggingFace: [`crumeike/tornadonet-checkpoints`](https://huggingface.co/crumeike/tornadonet-checkpoints)
 
-| Model | mAP@0.5 | Ordinal Acc | MAOE | FPS | Notes |
+| Model | mAP@0.5 | Ordinal Acc | MAOE | FPS | Download* | Notes |
 |---|---|---|---|---|---|
-| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 | Best severity grading |
-| YOLO11x Baseline | 46.05% | 85.20% | 0.76 | 66 | Best detection mAP |
-| YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 | Fastest, field-deployable |
-
+| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1) | Best severity grading |
+| YOLO11x Baseline | 46.05% | 85.20% | 0.76 | 66 | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline) | Best detection mAP |
+| YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline) | Fastest, field-deployable |
+\* *Values represent mean ± std across 3 random seeds (paper). Downloaded checkpoints are from the best-performing seed.*
 Evaluated on 3,333 street-view images (8,890 building instances) collected after the December 2021 Midwest tornado outbreak.
 
 ---
@@ -75,20 +75,6 @@ checkpoints/
 ```
 
 Or set `HF_TOKEN` in your `.env` and the API will download them automatically on first request.
-
-### Baseline Performance*
-
-| Model | Type | mAP@0.5 | F1 Score | Ordinal Top-1 | MAOE | FPS | Params | Download |
-|-------|------|---------|----------|---------------|------|-----|--------|----------|
-| YOLO11-n | CNN | 41.14% | 45.73% | 84.79% | 0.77 | 239 | 2.6M | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline) |
-| YOLO11-x | CNN | **46.05%** | **49.40%** | 85.20% | 0.76 | 66 | 56.8M | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline) |
-
-###  Ordinal Supervision Impact*
-| Model | Configuration | mAP@0.5 | Δ vs Baseline | Ordinal Top-1 | MAOE | Download |
-|-------|---------------|---------|---------------|---------------|------|----------|
-| RT-DETR-L | ψ=0.5, K=1 | **44.70%** | **+4.8 pp** | **91.15%** | **0.56** | [📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1) |
-
-\* *Values represent mean ± std across 3 random seeds (paper). Downloaded checkpoints are from the best-performing seed.*
 
 
 ### 3. Configure environment

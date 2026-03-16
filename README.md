@@ -27,7 +27,7 @@ All checkpoints are available on HuggingFace: [`crumeike/tornadonet-checkpoints`
 
 | Model | mAP@0.5 | Ordinal Acc | MAOE | FPS | Notes | Download* |
 |---|---|---|---|---|---|---|
-| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 | Best severity grading |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1)|
+| RT-DETR-L + Ordinal (ψ=0.5, K=1) | 44.70% | 91.15% | 0.56 | 78 | Best severity grading |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/resolve/main/tornadonet-rtdetr-l-ordinal-psi0.5-k1/best.pt?download=true)|
 | YOLO11x Baseline | 46.05% | 85.20% | 0.76 | 66 | Best detection mAP |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-x-baseline)| 
 | YOLO11n Baseline | 41.14% | 84.79% | 0.77 | 239 | Fastest, field-deployable |[📥](https://huggingface.co/crumeike/tornadonet-checkpoints/tree/main/tornadonet-yolo11-n-baseline)| 
 

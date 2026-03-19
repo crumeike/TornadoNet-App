@@ -98,6 +98,13 @@ body{font-family:var(--font-sans,system-ui,sans-serif);background:var(--color-ba
 .btn-p{background:var(--navy)!important;color:var(--gold)!important;border:1px solid var(--navy)!important;}
 .btn-p:hover{background:#0f2640!important;}
 .btn-sm{padding:5px 10px;font-size:12px;}
+/* Light gray background variant for subtle emphasis */
+.btn-shade{background:#f5f6f7;border-color:#e6e6e6}
+.btn-shade:hover{background:#eef1f4}
+/* Report button: light gray background with small leading icon */
+.btn-report{background:#f5f6f7;border-color:#e6e6e6;color:var(--color-text-primary)}
+.btn-report:hover{background:#eef1f4}
+.btn-report svg{width:14px;height:14px;flex-shrink:0;margin-right:8px;opacity:0.9}
 /* Danger button — red border always visible */
 .btn-d{
   border:1px solid #c0392b!important;
@@ -137,7 +144,7 @@ body{font-family:var(--font-sans,system-ui,sans-serif);background:var(--color-ba
 .mc-p{font-size:10px;color:var(--color-text-tertiary);margin-top:4px;font-family:var(--font-mono,monospace);}
 .mc-tag{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;margin-top:4px;}
 .tag-b{background:#eeedfe;color:#3c3489;}.tag-a{background:#e6f1fb;color:#0c447c;}.tag-f{background:#e1f5ee;color:#085041;}
-.preview-wrap{position:relative;width:100%;background:#1a1a1a;border-radius:var(--border-radius-md);overflow:hidden;}
+.preview-wrap{position:relative;width:100%;background:#1a1a1a;border-radius:var(--border-radius-md);overflow:hidden;border:1px solid #000}
 .preview-wrap canvas{display:block;width:100%;height:auto;}
 .preview-placeholder{width:100%;height:220px;background:#f0efea;border-radius:var(--border-radius-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--color-text-tertiary);}
 .preview-placeholder svg{width:32px;height:32px;opacity:.3;}
@@ -216,6 +223,54 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
 .frame-thumb{width:70px;height:48px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--color-text-tertiary);}
 .frame-lbl{font-size:9px;text-align:center;padding:2px 0;color:var(--color-text-secondary);}
 .divider{height:0.5px;background:var(--color-border-tertiary);margin:12px 0;}
+
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    html, body {
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+    .app, .main {
+        display: block !important;
+        width: 100% !important;
+    }
+    .sidebar,
+    .topbar,
+    #v-assess,
+    #v-dashboard,
+    #v-assistant,
+    #v-settings,
+    .card:not(#rpt-body),
+    button {
+        display: none !important;
+    }
+    #v-report {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    .page {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    .g2 {
+        display: block !important;
+    }
+    #rpt-body {
+        border: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+}
 </style>
 
 <div class="app">
@@ -241,9 +296,9 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
     <button class="nb" onclick="nav('settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
   </div>
   <div class="sb-foot">
-    <div class="sf-row"><div class="dot dg"></div><span id="sb-prov">Claude VLM ready</span></div>
-    <div class="sf-row"><div class="dot dy"></div><span>TornadoNet: simulation mode</span></div>
-    <div class="sf-row" id="sb-cnt"><div class="dot dg"></div>0 images analyzed</div>
+    <div class="sf-row"><div class="dot dy"></div><span id="sb-prov">VLM: not connected</span></div>
+    <div class="sf-row"><div class="dot dy"></div><span id="sb-sim-status">TornadoNet: simulation mode</span></div>
+    <div class="sf-row" id="sb-cnt"><div class="dot dy"></div>0 images analyzed</div>
   </div>
 </aside>
 
@@ -264,6 +319,7 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
           <div class="mpill-opt" id="mopt-yolo11n" onclick="selFromPill('yolo11n','YOLO11n','mopt-yolo11n')"><div><div class="mpill-opt-name">YOLO11n</div><div class="mpill-opt-sub">mAP 41.14% · 239 FPS · baseline</div></div><span class="mpill-check hidden">✓</span></div>
         </div>
       </div>
+      <button class="btn btn-sm btn-d" id="clear-btn" onclick="clearAssess()" style="display:none;">Clear</button>
       <button class="btn btn-p btn-sm" onclick="runAnalysis()"><span id="run-lbl">Run Analysis</span><span id="run-sp" class="spinner hidden"></span></button>
     </div>
   </div>
@@ -294,7 +350,7 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
             <div class="mcard" id="mc-y11x" onclick="selM('yolo11x','YOLO11x',this)"><div class="mc-n">YOLO11x</div><div class="mc-s">mAP@0.5: 46.05%</div><div class="mc-s">66 FPS · 56.8M params</div><div class="mc-p">baseline</div><span class="mc-tag tag-a">Best mAP</span></div>
             <div class="mcard" id="mc-y11n" onclick="selM('yolo11n','YOLO11n',this)"><div class="mc-n">YOLO11n</div><div class="mc-s">mAP@0.5: 41.14%</div><div class="mc-s">239 FPS · 2.6M params</div><div class="mc-p">baseline</div><span class="mc-tag tag-f">Fastest</span></div>
           </div>
-          <div style="font-size:11px;color:var(--color-text-secondary);">Checkpoints: <a href="https://huggingface.co/crumeike/tornadonet-checkpoints" target="_blank">crumeike/tornadonet-checkpoints</a> · <span style="color:#ba7517;">Simulation mode</span> · <span onclick="nav('settings')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Connect endpoint →</span></div>
+          <div style="font-size:11px;color:var(--color-text-secondary);">Checkpoints: <a href="https://huggingface.co/crumeike/tornadonet-checkpoints" target="_blank">crumeike/tornadonet-checkpoints</a> · <span id="endpoint-status" style="color:#ba7517;">Simulation mode</span> · <span onclick="nav('settings')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Connect endpoint →</span></div>
         </div>
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -316,7 +372,14 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
           <div id="preview-placeholder" class="preview-placeholder">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             <span style="font-size:12px;">Upload an image and run analysis to see detection preview</span>
-            <span style="font-size:11px;">or <span style="color:var(--navy);cursor:pointer;text-decoration:underline;" onclick="loadDemo()">load demo</span></span>
+            <span style="color:var(--navy);cursor:pointer;">
+                <select id="demo-sel" style="font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:3px;background:var(--color-background-secondary);color:var(--color-text-primary);margin-left:4px;" onchange="loadDemo(this.value)">
+                    <option value="">Try a demo image...</option>
+                    <option value="https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo1.jpg">Demo 1</option>
+                    <option value="https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo2.jpg">Demo 2</option>
+                    <option value="https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo3.jpg">Demo 3</option>
+                </select>
+            </span>
           </div>
           <div id="preview-wrap" class="preview-wrap hidden"><canvas id="det-canvas"></canvas></div>
           <div id="prev-note" class="hidden" style="margin-top:6px;font-size:10px;color:var(--color-text-tertiary);">Click a detection row below to highlight its bounding box</div>
@@ -326,13 +389,13 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
           <div id="no-det" style="text-align:center;padding:20px 0;font-size:13px;color:var(--color-text-secondary);">Run analysis to see detections</div>
           <div id="det-list" class="hidden"></div>
           <div id="det-dist" class="hidden" style="margin-top:11px;padding-top:11px;border-top:0.5px solid var(--color-border-tertiary);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span style="font-size:12px;font-weight:500;">Damage distribution</span><button class="btn btn-sm" onclick="nav('report')">Generate report →</button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span style="font-size:12px;font-weight:500;">Damage distribution</span><button class="btn btn-sm btn-report" onclick="nav('report')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Generate report →</button></div>
             <div id="dist-bars"></div>
           </div>
         </div>
         <div id="vlm-card" class="card hidden">
-          <div class="ct" style="display:flex;justify-content:space-between;align-items:center;"><span>AI Structural Assessment (T1–T5)</span><span id="vlm-prov-lbl" style="font-size:11px;color:var(--color-text-secondary);">Claude</span></div>
-          <div id="vlm-thinking" class="hidden" style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:var(--color-text-secondary);">Analyzing structural indicators <div class="pulse"><span></span><span></span><span></span></div></div>
+          <div class="ct" style="display:flex;justify-content:space-between;align-items:center;"><span>AI Structural Damage Assessment (T1–T5)</span><span id="vlm-prov-lbl" style="font-size:11px;color:var(--color-text-secondary);">Claude</span></div>
+          <div id="vlm-thinking" class="hidden" style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:var(--color-text-secondary);">Analyzing structural damage indicators... <div class="pulse"><span></span><span></span><span></span></div></div>
           <div id="vlm-output"></div>
         </div>
       </div>
@@ -391,17 +454,17 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
   <div class="topbar">
     <div><div class="tb-t">NIST Damage Assessment Report</div><div class="tb-m">Auto-generated · IN-CORE DS classification · CRADA CN-24-0590</div></div>
     <div class="tb-r">
-      <button class="btn btn-ai btn-sm" id="gen-btn" onclick="genReport()"><span id="gen-lbl">Generate with AI</span><span id="gen-sp" class="spinner hidden"></span></button>
+      <button class="btn btn-ai btn-sm btn-report" id="gen-btn" onclick="genReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg><span id="gen-lbl">Generate with AI</span><span id="gen-sp" class="spinner hidden"></span></button>
       <button class="btn btn-p btn-sm" onclick="window.print()">Export PDF</button>
     </div>
   </div>
   <div class="page">
     <div class="g2" style="align-items:start;">
-      <div class="card">
+      <div class="card" id="rpt-body">
         <div style="text-align:center;padding-bottom:14px;border-bottom:1.5px solid var(--navy);margin-bottom:14px;">
           <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:3px;">National Institute of Standards and Technology</div>
           <div style="font-size:16px;font-weight:500;color:var(--navy);">Post-Tornado Building Damage Assessment</div>
-          <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px;">IN-CORE Platform · TornadoNet AI · CRADA CN-24-0590</div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px;">IN-CORE Classification · TornadoNet AI · CRADA CN-24-0590</div>
         </div>
         <div style="margin-bottom:16px;"><div class="rh">1. Event Summary</div>
           <div class="rr"><span class="rl">Event</span><span>2021 Midwest Tornado Outbreak (Dec 10–11)</span></div>
@@ -419,20 +482,42 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
           <div class="rr"><span class="rl">DS3 Extensive</span><span id="rpt-ds3">—</span></div>
           <div class="rr"><span class="rl">DS4 Complete</span><span id="rpt-ds4">—</span></div>
         </div>
-        <div style="margin-bottom:16px;"><div class="rh">3. AI Damage Narrative</div>
-          <div id="rpt-narr" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">Click "Generate with AI" to produce a NIST-style narrative based on detected structures and IN-CORE severity classifications.</div>
+        <div id="section-narrative" style="margin-bottom:16px;">
+          <div class="rh">AI Damage Narrative</div>
+          <div id="rpt-narr" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">
+            Click "Generate with AI" to produce a NIST-style narrative based on detected structures and IN-CORE severity classifications.
+          </div>
         </div>
-        <div><div class="rh">4. Response Recommendations</div>
-          <div id="rpt-recs" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">AI-generated response priorities appear here after generation.</div>
+
+        <div id="section-recommendations" style="margin-bottom:16px;">
+          <div class="rh">Response Recommendations</div>
+          <div id="rpt-recs" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);">
+            AI-generated response priorities appear here after generation.
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;" id="archetype-section" class="hidden">
+          <div class="rh">Archetype Analysis</div>
+          <div id="rpt-archetype" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);"></div>
+        </div>
+        <div id="section-vlm" style="margin-bottom:16px;" class="hidden">
+          <div class="rh">VLM–TornadoNet Comparison</div>
+          <div id="rpt-vlm" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary);"></div>
+        </div>
+        <div style="margin-top:16px;padding:10px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid var(--navy);">
+          <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-secondary);margin-bottom:4px;">Damage Distribution Summary</div>
+          <div id="rpt-summary" style="font-size:11px;font-weight:500;color:var(--color-text-primary);">
+            Run analysis and generate report to see distribution summary.
+          </div>
         </div>
         <div style="margin-top:14px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);font-size:10px;color:var(--color-text-tertiary);text-align:center;">TornadoNet · CRADA CN-24-0590 · JHU · University of Alabama · University of South Alabama · NIST</div>
       </div>
       <div>
         <div class="card" style="margin-bottom:12px;"><div class="ct">Report options</div>
-          <div class="srow"><div><div class="skey">AI damage narrative</div><div class="sval">LLM-generated assessment prose</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
-          <div class="srow"><div><div class="skey">Response priorities</div><div class="sval">Critical structure flagging</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
-          <div class="srow"><div><div class="skey">Archetype mapping</div><div class="sval">T1–T19 structural types</div></div><div class="tog" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
-          <div class="srow" style="border:none;"><div><div class="skey">VLM assessment summary</div><div class="sval">Include T1–T5 element findings</div></div><div class="tog on" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">AI damage narrative</div><div class="sval">LLM-generated assessment prose</div></div><div class="tog on" id="tog-narrative" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">Response priorities</div><div class="sval">Critical structure flagging</div></div><div class="tog on" id="tog-priorities" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow"><div><div class="skey">Archetype mapping</div><div class="sval">T1–T5 structural types</div></div><div class="tog" id="tog-archetype" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
+          <div class="srow" style="border:none;"><div><div class="skey">VLM–TornadoNet Comparison</div><div class="sval">AI-generated comparison of VLM and detector findings</div></div><div class="tog" id="tog-vlm" onclick="this.classList.toggle('on')"><div class="kn"></div></div></div>
         </div>
         <div class="card" style="margin-bottom:12px;"><div class="ct">Ask about this report</div>
           <div style="display:flex;flex-direction:column;gap:5px;">
@@ -541,8 +626,8 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
             <div class="mcard" id="ep-y11x" onclick="selEP('yolo11x',this)"><div class="mc-n" style="font-size:11px;">YOLO11x</div><div class="mc-s">46% mAP · 66 FPS</div><span class="mc-tag tag-a" style="font-size:9px;">Best mAP</span></div>
             <div class="mcard" id="ep-y11n" onclick="selEP('yolo11n',this)"><div class="mc-n" style="font-size:11px;">YOLO11n</div><div class="mc-s">41% mAP · 239 FPS</div><span class="mc-tag tag-f" style="font-size:9px;">Fastest</span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-            <button class="btn btn-sm" onclick="testConn()">Test connection</button>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <button class="btn btn-sm btn-outline btn-shade" onclick="testConn()">Test connection</button>
             <div id="conn-st" style="font-size:11px;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px;"><span class="dot dy"></span>Not connected</div>
           </div>
           <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;">
@@ -563,9 +648,9 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
           <div class="rr"><span class="rl">Dataset</span><span>3,333 images · 8,890 instances</span></div>
           <div class="rr"><span class="rl">Classification</span><span>IN-CORE DS0–DS4</span></div>
           <div class="divider"></div>
-          <div class="rr"><span class="rl">Paper</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">TornadoNet manuscript</a></span></div>
+          <div class="rr"><span class="rl">Paper</span><span><a href="https://arxiv.org/abs/2603.11557" target="_blank">TornadoNet manuscript</a></span></div>
           <div class="rr"><span class="rl">Checkpoints</span><span><a href="https://huggingface.co/crumeike/tornadonet-checkpoints" target="_blank">crumeike/tornadonet-checkpoints</a></span></div>
-          <div class="rr"><span class="rl">Dataset</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">TornadoNet dataset</a></span></div>
+          <div class="rr"><span class="rl">Dataset</span><span><a href="https://huggingface.co/datasets/crumeike/tornadonet-datasets" target="_blank">TornadoNet dataset</a></span></div>
           <div class="rr" style="border:none;"><span class="rl">Code</span><span><a href="https://github.com/crumeike/TornadoNet" target="_blank">github.com/crumeike/TornadoNet</a></span></div>
         </div>
       </div>
@@ -576,6 +661,7 @@ a{color:var(--navy);text-decoration:none;}a:hover{text-decoration:underline;}
 </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const S={view:'assess',model:'rtdetr',mLabel:'RT-DETR-L + Ordinal',provider:'claude',imgs:0,buildings:0,results:[],chat:[],keys:{},vlmOn:false,detBoxes:[],activeBox:-1,_img:null};
@@ -620,14 +706,192 @@ function onFiles(files){
   Array.from(files).forEach(f=>{if(f.type?.startsWith('video/'))isVid=true;const d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;';d.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="color:var(--color-text-secondary);">${(f.size/1024).toFixed(0)} KB</span>`;list.appendChild(d);});
   document.getElementById('frame-panel').classList.toggle('hidden',!isVid);if(isVid)buildFrameStrip();
   const imgF=Array.from(files).find(f=>f.type?.startsWith('image/'));if(imgF)loadImgPreview(imgF);
+  document.getElementById('preview-placeholder').classList.remove('hidden');
+  document.getElementById('preview-wrap').classList.add('hidden');
+  document.getElementById('prev-note').classList.add('hidden');
+  document.getElementById('prev-status').textContent = 'Awaiting analysis';
+  document.getElementById('no-det').classList.remove('hidden');
+  document.getElementById('det-list').classList.add('hidden');
+  document.getElementById('det-dist').classList.add('hidden');
+  document.getElementById('det-cnt').textContent = 'No analysis run';
+  document.getElementById('vlm-card').classList.add('hidden');
 }
-function onDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('over');onFiles(e.dataTransfer.files);}
+function onDrop(e) {
+    e.preventDefault();
+    document.getElementById('dz').classList.remove('over');
+    const dt = new DataTransfer();
+    Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
+    document.getElementById('fi').files = dt.files;  // ← populate file input
+    onFiles(e.dataTransfer.files);
+}
 function loadImgPreview(file){const r=new FileReader();r.onload=ev=>{const img=new Image();img.onload=()=>{S._img=img;drawCanvas([],- 1);document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');document.getElementById('prev-status').textContent='Image loaded — run analysis';};img.src=ev.target.result;};r.readAsDataURL(file);}
 function buildFrameStrip(){const s=document.getElementById('frame-strip');s.innerHTML='';['0:03','0:07','0:12','0:18','0:24','0:31','0:38'].forEach((t,i)=>{const d=document.createElement('div');d.className='frame-item'+(i===0?' sel':'');d.onclick=()=>{document.querySelectorAll('.frame-item').forEach(f=>f.classList.remove('sel'));d.classList.add('sel');};d.innerHTML=`<div class="frame-thumb">frame ${i+1}</div><div class="frame-lbl">${t}</div>`;s.appendChild(d);});}
-async function runAnalysis(){
+async function runAnalysis() {
+  const lbl = document.getElementById('run-lbl'), sp = document.getElementById('run-sp');
+  lbl.textContent = 'Analyzing...'; sp.classList.remove('hidden');
+  document.getElementById('clear-btn').style.display = 'inline-flex';
+  const apiUrl = document.getElementById('api-url').value.trim();
+  // const apiUrl = 'http://localhost:8000'; // hardcoded for easier testing - change as needed
+  const fileInput = document.getElementById('fi');
+
+  // If no backend URL or no file uploaded, fall back to simulation
+  if (!apiUrl || !fileInput.files.length) {
+    await runSimulation();
+    lbl.textContent = 'Run Analysis'; sp.classList.add('hidden');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    const modelIdMap = {
+      'rtdetr': 'rtdetr-ord',
+      'yolo11x': 'yolo11x',
+      'yolo11n': 'yolo11n'
+    };
+    console.log('Sending model_id:', S.model);
+    formData.append('conf', '0.25');
+    const modelId = modelIdMap[S.model];  // e.g. 'yolo11x', 
+    const resp = await fetch(`${apiUrl}/predict?model_id=${modelId}&conf=0.25`, {
+        method: 'POST',
+        body: formData   // only the file in formData now
+    });
+    if (!resp.ok) throw new Error(`Server error: ${resp.status}`);
+    const data = await resp.json();
+
+    // Draw on canvas ourselves using bbox coordinates
+    const canvas = document.getElementById('det-canvas');
+    const wrap = document.getElementById('preview-wrap');
+    document.getElementById('preview-placeholder').classList.add('hidden');
+    wrap.classList.remove('hidden');
+
+    // First draw the original image, then overlay boxes
+    const bgImg = new Image();
+    bgImg.onload = () => {
+      canvas.width = bgImg.width;
+      canvas.height = bgImg.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bgImg, 0, 0);
+
+      //create Damage State Map
+      const dsMaplong = {'DS0':'DS0-Undamaged', 'DS1':'DS1-Slight', 'DS2':'DS2-Moderate', 'DS3':'DS3-Extensive', 'DS4':'DS4-Complete'};
+      data.detections.forEach((det, i) => {
+        const color = det.ds_color;
+        const [x1, y1, x2, y2] = det.bbox_xyxy;
+        const w = x2 - x1, h = y2 - y1;
+        const isActive = i === S.activeBox;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = isActive ? 3 : 2;
+        ctx.strokeRect(x1, y1, w, h);
+        if (isActive) {
+          ctx.fillStyle = color + '28';
+          ctx.fillRect(x1, y1, w, h);
+        }
+
+        const label = `${dsMaplong[det.ds_id]} ${Math.round(det.confidence * 100)}%`;
+        ctx.font = 'bold 24px monospace';
+        const tw = ctx.measureText(label).width;
+        const ly = y1 > 18 ? y1 - 4 : y1 + h + 14;
+        ctx.fillStyle = color;
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 6;
+        ctx.fillRect(x1 - 1, ly - 16, tw + 8, 24);
+        ctx.fillStyle = 'white';
+        ctx.fillText(label, x1 + 3, ly+2);
+      });
+
+      // Store boxes for row-click highlighting
+      S.detBoxes = data.detections.map(d => ({
+        ds: d.ds_id, conf: d.confidence,
+        c: d.ds_color, bg: d.ds_color + '22', tc: d.ds_color,
+        x: d.bbox_xyxy[0], y: d.bbox_xyxy[1],
+        w: d.bbox_xyxy[2] - d.bbox_xyxy[0],
+        h: d.bbox_xyxy[3] - d.bbox_xyxy[1]
+      }));
+      S._img = bgImg; // store for re-draw on row click
+    };
+    // Use the raw uploaded image as background
+    bgImg.src = URL.createObjectURL(fileInput.files[0]);
+
+    document.getElementById('preview-placeholder').classList.add('hidden');
+    wrap.classList.remove('hidden');
+    document.getElementById('prev-note').classList.remove('hidden');
+    document.getElementById('prev-status').textContent = `${data.detection_count} buildings detected · ${data.inference_ms}ms`;
+
+    // Populate detection list from real results
+    const res = data.detections.map(d => ({
+      ds: d.ds_id, conf: d.confidence,
+      c: d.ds_color, bg: d.ds_color + '22', tc: d.ds_color,
+      bbox: d.bbox_xyxy
+    }));
+    
+    document.getElementById('no-det').classList.add('hidden');
+    document.getElementById('det-list').classList.remove('hidden');
+    document.getElementById('det-dist').classList.remove('hidden');
+    document.getElementById('det-cnt').textContent = `${data.detection_count} detections`;
+
+    const list = document.getElementById('det-list'); list.innerHTML = '';
+    const dsMapshort = {'DS0':'DS0', 'DS1':'DS1', 'DS2':'DS2', 'DS3':'DS3', 'DS4':'DS4'};
+    res.forEach((r, i) => {
+      const d = document.createElement('div'); d.className = 'det-row';
+      d.innerHTML = `<div class="det-th" style="background:${r.bg};color:${r.c};">${dsMapshort[r.ds]}</div>
+      <div class="det-inf"><div class="det-n">Building ${String(i+1).padStart(3,'0')}</div>
+      <div class="det-m">IN-CORE ${dsMapshort[r.ds]} · ${S.mLabel}</div></div>
+      <div class="cw"><div class="cv">${Math.round(r.conf*100)}%</div>
+      <div class="cb2"><div class="cf" style="width:${Math.round(r.conf*100)}%;background:${r.c};"></div></div></div>`;
+      d.onclick = () => hilightBox(i);
+      list.appendChild(d);
+    });
+
+    // Damage distribution bars
+    const bars = document.getElementById('dist-bars'); bars.innerHTML = '';
+    const dc = {DS0:'#4a9e6b',DS1:'#f0c040',DS2:'#e8883a',DS3:'#d44e2a',DS4:'#8b1a1a'};
+    Object.entries(data.damage_distribution).forEach(([k, v]) => {
+      if (!v) return;
+      const pct = Math.round((v / data.detection_count) * 100);
+      bars.innerHTML += `<div class="sev-r"><div class="sev-l">${k}</div><div class="sev-bw"><div class="sev-b" style="width:${pct}%;background:${dc[k]};"></div></div><div class="sev-c">${v}</div></div>`;
+    });
+
+    S.imgs++; S.buildings += data.detection_count; S.results = [...S.results, ...res];
+    document.getElementById('sb-cnt').innerHTML = `<div class="dot dg"></div>${S.imgs} image${S.imgs>1?'s':''} analyzed`;
+    document.getElementById('ctx-i').textContent = S.imgs;
+
+    if (S.vlmOn && fileInput.files.length > 0) await runVLM(res);
+    // Update status to live mode after successful backend response
+    document.getElementById('sb-sim-status').textContent = 'TornadoNet: live mode';
+    document.getElementById('sb-sim-status').previousElementSibling.className = 'dot dg';
+    const el = document.getElementById('endpoint-status');
+    el.textContent = 'Live mode';
+    el.style.color = '#4a9e6b';
+
+  } catch (e) {
+    console.error(e);
+    // Fall back to simulation if backend call fails
+    document.getElementById('sb-sim-status').textContent = 'TornadoNet: simulation mode';
+    document.getElementById('sb-sim-status').previousElementSibling.className = 'dot dy';
+    await runSimulation();
+  }
+
+  lbl.textContent = 'Run Analysis'; sp.classList.add('hidden');
+}
+async function runSimulation(){
+  const el = document.getElementById('endpoint-status');
+  el.textContent = 'Simulation mode';
+  el.style.color = '#ba7517';
+  document.getElementById('sb-sim-status').textContent = 'TornadoNet: simulation mode';
+  document.getElementById('sb-sim-status').previousElementSibling.className = 'dot dy';
   const lbl=document.getElementById('run-lbl'),sp=document.getElementById('run-sp');lbl.textContent='Analyzing...';sp.classList.remove('hidden');await sleep(1400);
   const res=MOCK[S.model]||MOCK.rtdetr;
-  const sb=[{x:38,y:58,w:108,h:128},{x:168,y:48,w:98,h:118},{x:282,y:68,w:112,h:112},{x:388,y:52,w:102,h:122}];
+  const canvas = document.getElementById('det-canvas');
+  const W = canvas.width || 500;
+  const H = canvas.height || 375;
+  const sb = [
+      {x: W*0.07, y: H*0.15, w: W*0.22, h: H*0.35},
+      {x: W*0.33, y: H*0.13, w: W*0.20, h: H*0.32},
+      {x: W*0.56, y: H*0.18, w: W*0.23, h: H*0.30},
+      {x: W*0.78, y: H*0.14, w: W*0.20, h: H*0.33},
+  ];
   S.detBoxes=res.map((r,i)=>({...r,...sb[i%sb.length]}));S.activeBox=-1;
   drawCanvas(S.detBoxes,-1);
   document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');document.getElementById('prev-note').classList.remove('hidden');document.getElementById('prev-status').textContent=res.length+' buildings detected';
@@ -642,9 +906,73 @@ async function runAnalysis(){
   lbl.textContent='Run Analysis';sp.classList.add('hidden');if(S.vlmOn)await runVLM(res);
 }
 function drawCanvas(boxes,activeIdx){
-  const canvas=document.getElementById('det-canvas'),W=500,H=375;canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
-  if(S._img){ctx.drawImage(S._img,0,0,W,H);}else{ctx.fillStyle='#2a3040';ctx.fillRect(0,0,W,H);ctx.fillStyle='#3a4050';ctx.fillRect(0,H*.6,W,H*.4);ctx.fillStyle='#222830';ctx.fillRect(0,H*.55,W,H*.08);[40,155,270,378].forEach(x=>{ctx.fillStyle='#4a5060';ctx.fillRect(x,H*.15,92,H*.42);ctx.fillStyle='#3a4050';ctx.fillRect(x+5,H*.15,82,H*.18);});}
-  boxes.forEach((b,i)=>{const color=DSC[b.ds]||'#888';const isA=i===activeIdx;ctx.strokeStyle=color;ctx.lineWidth=isA?3:2;ctx.strokeRect(b.x,b.y,b.w,b.h);if(isA){ctx.fillStyle=color+'28';ctx.fillRect(b.x,b.y,b.w,b.h);}const label=`${b.ds} ${Math.round(b.conf*100)}%`;ctx.font=`bold ${isA?13:11}px monospace`;const tw=ctx.measureText(label).width;const lx=b.x,ly=b.y>18?b.y-4:b.y+b.h+14;ctx.fillStyle=color;ctx.fillRect(lx-1,ly-12,tw+8,16);ctx.fillStyle='white';ctx.fillText(label,lx+3,ly);});
+  const canvas = document.getElementById('det-canvas');
+  const W = canvas.width || 500;
+  const H = canvas.height || 375;
+  const ctx = canvas.getContext('2d');
+
+  // If canvas hasn't been sized yet, ensure defaults
+  if (!canvas.width) { canvas.width = W; canvas.height = H; }
+
+  if (S._img) {
+    ctx.clearRect(0,0,W,H);
+    ctx.drawImage(S._img, 0, 0, W, H);
+  } else {
+    ctx.fillStyle='#2a3040';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#3a4050';ctx.fillRect(0,H*.6,W,H*.4);
+    ctx.fillStyle='#222830';ctx.fillRect(0,H*.55,W,H*.08);
+    [40,155,270,378].forEach(x=>{ctx.fillStyle='#4a5060';ctx.fillRect(x,H*.15,92,H*.42);ctx.fillStyle='#3a4050';ctx.fillRect(x+5,H*.15,82,H*.18);});
+  }
+
+  boxes.forEach((b,i)=>{
+    const color = DSC[b.ds] || '#888';
+    const isA = i === activeIdx;
+    const dsMaplong = {'DS0':'DS0-Undamaged', 'DS1':'DS1-Slight', 'DS2':'DS2-Moderate', 'DS3':'DS3-Extensive', 'DS4':'DS4-Complete'};
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isA ? 3 : 2;
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+    if (isA) {
+      ctx.fillStyle = color + '28';
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+    }
+
+    const label = `${dsMaplong[b.ds]} ${Math.round(b.conf*100)}%`;
+    ctx.font = `bold 24px monospace`;
+    const tw = ctx.measureText(label).width;
+    const lx = b.x, ly = b.y > 18 ? b.y - 4 : b.y + b.h + 14;
+    ctx.fillStyle = color;
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 6;
+    ctx.fillRect(lx - 1, ly - 16, tw + 8, 24);
+    ctx.fillStyle = 'white';
+    ctx.fillText(label, lx + 3, ly+2);
+  });
+}
+function clearAssess() {
+    // Reset preview
+    document.getElementById('preview-placeholder').classList.remove('hidden');
+    document.getElementById('preview-wrap').classList.add('hidden');
+    document.getElementById('prev-note').classList.add('hidden');
+    document.getElementById('prev-status').textContent = 'Awaiting analysis';
+    // Reset detections
+    document.getElementById('no-det').classList.remove('hidden');
+    document.getElementById('det-list').classList.add('hidden');
+    document.getElementById('det-dist').classList.add('hidden');
+    document.getElementById('det-cnt').textContent = 'No analysis run';
+    // Reset VLM
+    document.getElementById('vlm-card').classList.add('hidden');
+    document.getElementById('vlm-output').innerHTML = '';
+    // Reset file input
+    document.getElementById('fi').value = '';
+    document.getElementById('file-list').style.display = 'none';
+    document.getElementById('frame-panel').classList.add('hidden');
+    // Reset state (keep backend/model/key connections)
+    S.results = [];
+    S.detBoxes = [];
+    S.activeBox = -1;
+    S._img = null;
+    // Hide clear button
+    document.getElementById('clear-btn').style.display = 'none';
 }
 function hilightBox(idx){document.querySelectorAll('.det-row').forEach((r,i)=>r.classList.toggle('highlighted',i===idx));if(S.activeBox===idx){S.activeBox=-1;drawCanvas(S.detBoxes,-1);}else{S.activeBox=idx;drawCanvas(S.detBoxes,idx);}}
 const MV=[
@@ -653,69 +981,582 @@ const MV=[
   {roofCovering:{obs:'Over 50% damage',ds:'DS3'},windowDoor:{obs:'4 openings failed',ds:'DS3'},roofSheathing:{obs:'4 sections, under 35%',ds:'DS3'},roofWall:{obs:'No failure',ds:'DS0'},overall:'DS3',rationale:'Extensive damage — rightmost column is DS3.',confidence:'High'},
   {roofCovering:{obs:'Minor surface damage',ds:'DS1'},windowDoor:{obs:'1 window cracked',ds:'DS1'},roofSheathing:{obs:'No failure',ds:'DS0'},roofWall:{obs:'No failure',ds:'DS0'},overall:'DS1',rationale:'Slight peripheral damage.',confidence:'High'}
 ];
-async function runVLM(res){
-  const card=document.getElementById('vlm-card'),think=document.getElementById('vlm-thinking'),output=document.getElementById('vlm-output');
-  const prov=document.getElementById('vlm-sel').value;document.getElementById('vlm-prov-lbl').textContent={claude:'Claude',gpt4o:'GPT-4o',gemini:'Gemini 1.5 Pro',grok:'Grok Vision'}[prov]||prov;
-  card.classList.remove('hidden');output.innerHTML='';think.classList.remove('hidden');
-  const key=S.keys.claude||document.getElementById('k-claude').value.trim();
-  if(!key){await sleep(900);think.classList.add('hidden');output.innerHTML=buildColl(res,true);addCH();return;}
-  try{
-    const dsum=res.map((r,i)=>`Building ${i+1}: TornadoNet=${r.ds}`).join('; ');
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:`You are a NIST structural engineer. TornadoNet detected ${res.length} buildings: ${dsum}. Using IN-CORE T1-T5 decision matrix, assess EACH building. Respond ONLY with valid JSON array, no markdown: [{"building":1,"roofCovering":{"obs":"brief","ds":"DS0-DS4"},"windowDoor":{"obs":"brief","ds":"DS0-DS4"},"roofSheathing":{"obs":"brief","ds":"DS0-DS4"},"roofWall":{"obs":"brief","ds":"DS0-DS4"},"overall":"DS0-DS4","rationale":"1 sentence","confidence":"Low/Medium/High"}]`}]})});
-    const data=await resp.json();let txt=data.content?.[0]?.text||'[]';txt=txt.replace(/```json|```/g,'').trim();
-    think.classList.add('hidden');output.innerHTML=buildColl(res,false,JSON.parse(txt));addCH();
-  }catch(e){think.classList.add('hidden');output.innerHTML=`<div style="font-size:12px;color:var(--color-text-secondary);">Assessment failed. Check API key in Settings.</div>`;}
+async function runVLM(res) {
+    const card = document.getElementById('vlm-card');
+    const think = document.getElementById('vlm-thinking');
+    const output = document.getElementById('vlm-output');
+    const prov = document.getElementById('vlm-sel').value;
+    document.getElementById('vlm-prov-lbl').textContent = {claude:'Claude',gpt4o:'GPT-4o',gemini:'Gemini 1.5 Pro',grok:'Grok Vision'}[prov] || prov;
+    const provLbls = {claude:'Claude', gpt4o:'GPT-4o', gemini:'Gemini 1.5 Pro', grok:'Grok Vision'};
+    card.classList.remove('hidden');
+    output.innerHTML = '';
+    think.classList.remove('hidden');
+
+    const apiUrl = document.getElementById('api-url').value.trim();
+    const fileInput = document.getElementById('fi');
+    if (!fileInput.files.length) {
+      document.getElementById('vlm-card').classList.add('hidden');
+      return;
+    }
+    const key = S.keys.claude || document.getElementById('k-claude').value.trim();
+
+    // Need both a backend URL,  an uploaded file and a key to run real VLM assessment - otherwise show message and skip to avoid confusion
+    if (!apiUrl || !fileInput.files.length || !key) {
+        think.classList.add('hidden');
+        output.innerHTML = '<div style="font-size:12px;color:var(--color-text-secondary);">Ops! Could not run VLM assessment. Check the following:<br> 1. Connect backend<br> 2. Upload an image<br> 3. Provide an API key in the settings tab</div>';
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('api_key', key); 
+
+        const resp = await fetch(`${apiUrl}/vlm?provider=${prov}`, {
+            method: 'POST',
+            body: formData  // Remove api_key from the URL
+        });
+        const data = await resp.json();
+
+        // Parse the JSON array from Claude's text response
+        let txt = data.content?.[0]?.text || '[]';
+        txt = txt.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(txt);
+
+        think.classList.add('hidden');
+        output.innerHTML = buildCollapsibles(parsed);
+        
+        // Build comparison summary
+        const tornadoHighest = S.results.reduce((max, r) => {
+            const order = {DS0:0,DS1:1,DS2:2,DS3:3,DS4:4};
+            return order[r.ds] > order[max] ? r.ds : max;
+        }, 'DS0');
+
+        const vlmHighest = parsed.reduce((max, b) => {
+            const order = {DS0:0,DS1:1,DS2:2,DS3:3,DS4:4};
+            return order[b.overall] > order[max] ? b.overall : max;
+        }, 'DS0');
+
+        const tornadoDist = S.results.reduce((acc, r) => {
+            acc[r.ds] = (acc[r.ds]||0)+1; return acc;
+        }, {});
+
+        const vlmDist = parsed.reduce((acc, b) => {
+            acc[b.overall] = (acc[b.overall]||0)+1; return acc;
+        }, {});
+
+        const agree = tornadoHighest === vlmHighest;
+        const dsCls = {DS0:'ds0',DS1:'ds1',DS2:'ds2',DS3:'ds3',DS4:'ds4'};
+
+        const compHtml = `
+          <div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary);">
+              <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-secondary);margin-bottom:10px;">Assessment Comparison</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                  <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+                      <div style="font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">TornadoNet</div>
+                      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                          <span style="font-size:11px;color:var(--color-text-secondary);">Highest:</span>
+                          <span class="ds ${dsCls[tornadoHighest]}">${tornadoHighest}</span>
+                      </div>
+                      <div style="font-size:11px;color:var(--color-text-secondary);">
+                          ${Object.entries(tornadoDist).map(([k,v])=>`${k}: ${v}`).join(' · ')}
+                      </div>
+                  </div>
+                  <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+                      <div style="font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">VLM (${document.getElementById('vlm-prov-lbl').textContent})</div>
+                      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                          <span style="font-size:11px;color:var(--color-text-secondary);">Highest:</span>
+                          <span class="ds ${dsCls[vlmHighest]}">${vlmHighest}</span>
+                      </div>
+                      <div style="font-size:11px;color:var(--color-text-secondary);">
+                          ${Object.entries(vlmDist).map(([k,v])=>`${k}: ${v}`).join(' · ')}
+                      </div>
+                  </div>
+              </div>
+              <div style="padding:8px 12px;border-radius:var(--border-radius-md);background:${agree?'#e1f5ee':'#faece7'};border:0.5px solid ${agree?'#4a9e6b':'#e8883a'};">
+                  <span style="font-size:12px;font-weight:500;color:${agree?'#085041':'#4a1b0c'};">
+                      ${agree ? '✓ Both assessments agree on highest severity: ' + tornadoHighest : '⚠ Assessments diverge — TornadoNet: ' + tornadoHighest + ' · VLM: ' + vlmHighest}
+                  </span>
+                  <div style="font-size:11px;color:${agree?'#085041':'#4a1b0c'};margin-top:2px;">
+                      ${agree ? 'High confidence in severity classification.' : 'Review individual building assessments above for discrepancies.'}
+                  </div>
+              </div>
+          </div>`;
+
+          document.getElementById('vlm-output').innerHTML += compHtml;
+
+          addCH();
+          document.getElementById('sb-prov').textContent = `${provLbls[prov]} active`;
+          document.getElementById('sb-prov').previousElementSibling.className = 'dot dg';
+    } catch(e) {
+        document.getElementById('sb-prov').textContent = `${provLbls[prov]} error`;
+        document.getElementById('sb-prov').previousElementSibling.className = 'dot dr';
+        think.classList.add('hidden');
+        output.innerHTML = `<div style="font-size:12px;color:var(--color-text-secondary);">VLM assessment failed: ${e.message}</div>`;
+    }
 }
-function buildColl(res,isDemo,data){
-  const dc={DS0:'ds0',DS1:'ds1',DS2:'ds2',DS3:'ds3',DS4:'ds4'};
-  return res.map((r,i)=>{
-    const d=isDemo?MV[i%MV.length]:(data&&data[i]?data[i]:MV[i%MV.length]);
-    const rows=[['Roof Covering',d.roofCovering?.obs||'—',d.roofCovering?.ds||'—'],['Window / Door',d.windowDoor?.obs||'—',d.windowDoor?.ds||'—'],['Roof Sheathing',d.roofSheathing?.obs||'—',d.roofSheathing?.ds||'—'],['Roof-to-Wall',d.roofWall?.obs||'—',d.roofWall?.ds||'—']];
-    return `<div class="coll-hdr" data-idx="${i}"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Building ${i+1}</span><span class="ds ${dc[r.ds]||''}">${r.ds} <span style="opacity:.65;font-size:10px;">(TornadoNet)</span></span><span class="ds ${dc[d.overall]||''}">${d.overall} <span style="opacity:.65;font-size:10px;">(AI)</span></span>${isDemo?'<span style="font-size:10px;color:#ba7517;">simulation</span>':''}</div><span class="coll-arrow" style="font-size:11px;color:var(--color-text-tertiary);">▾</span></div>
-    <div class="coll-body hidden" id="cb-${i}"><table class="vlm-table"><thead><tr><th>Element</th><th>Observed indicator</th><th>DS</th></tr></thead><tbody>${rows.map(([el,obs,ds])=>`<tr><td style="font-weight:500;">${el}</td><td style="color:var(--color-text-secondary);">${obs}</td><td><span class="ds ${dc[ds]||''}">${ds}</span></td></tr>`).join('')}</tbody></table><div style="margin-top:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:500;">Final assignment:</span><span class="ds ${dc[d.overall]||''}">${d.overall}</span><span style="font-size:11px;color:var(--color-text-secondary);">Confidence: ${d.confidence||'—'}</span></div>${d.rationale?`<div style="margin-top:7px;font-size:12px;color:var(--color-text-secondary);line-height:1.6;padding:7px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">${d.rationale}</div>`:''}</div>`;
-  }).join('');
+function buildCollapsibles(data) {
+    const dsCls = {DS0:'ds0',DS1:'ds1',DS2:'ds2',DS3:'ds3',DS4:'ds4'};
+    return data.map((d, i) => {
+        const rows = [
+            ['Structure type', d.structure_type||'—', ''],
+            ['Plan type',      d.plan_type||'—',      ''],
+            ['Roof type',      d.roof_type||'—',      ''],
+            ['Roof Covering',  d.roofCovering?.obs||'—', d.roofCovering?.ds||'—'],
+            ['Window / Door',  d.windowDoor?.obs||'—',   d.windowDoor?.ds||'—'],
+            ['Roof Sheathing', d.roofSheathing?.obs||'—', d.roofSheathing?.ds||'—'],
+            ['Roof-to-Wall',   d.roofWall?.obs||'—',    d.roofWall?.ds||'—'],
+        ];
+        const rowsHtml = rows.map(([el, obs, ds]) =>
+            `<tr><td style="font-weight:500;">${el}</td>
+            <td style="color:var(--color-text-secondary);">${obs}</td>
+            <td>${ds ? `<span class="ds ${dsCls[ds]||''}">${ds}</span>` : ''}</td></tr>`
+        ).join('');
+
+        return `
+        <div class="coll-hdr" data-idx="${i}">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+                <span style="font-size:13px;font-weight:500;">Building ${d.building}</span>
+                <span style="font-size:11px;color:var(--color-text-secondary);">(${d.location_description||''})<br></span>
+                <span style="font-size:11px;color:var(--color-text-secondary);">
+                  ${d.color||''}, ${d.stories ? d.stories+'-story' : ''}, ${d.structure_type||''}, ${d.plan_type||''}, ${d.roof_type||''}
+                <br></span>
+                <span class="ds ${dsCls[d.overall]||''}">${d.overall} <span style="opacity:.65;font-size:10px;">(VLM)</span></span>
+                <span style="font-size:11px;color:var(--color-text-secondary);">${d.confidence_pct||'—'}% confidence</span>
+            </div>
+            <span class="coll-arrow" style="font-size:11px;color:var(--color-text-tertiary);">▾</span>
+        </div>
+        <div class="coll-body hidden" id="cb-${i}">
+            <table class="vlm-table">
+                <thead><tr><th>Element</th><th>Observed indicator</th><th>DS</th></tr></thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+            <div style="margin-top:9px;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:500;">Final assignment:</span>
+                <span class="ds ${dsCls[d.overall]||''}">${d.overall}</span>
+            </div>
+            ${d.rationale ? `<div style="margin-top:7px;font-size:12px;color:var(--color-text-secondary);
+                line-height:1.6;padding:7px 10px;background:var(--color-background-secondary);
+                border-radius:var(--border-radius-md);">${d.rationale}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+function renumberReportSections() {
+    const sections = [
+        'section-narrative',
+        'section-recommendations',
+        'archetype-section',
+        'section-vlm'
+    ];
+    const headings = [
+        'AI Damage Narrative',
+        'Response Recommendations',
+        'Archetype Analysis',
+        'VLM–TornadoNet Comparison'
+    ];
+    
+    let counter = 3; // starts at 3 since Event Summary=1, Damage Inventory=2
+    sections.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rh = el.querySelector('.rh');
+        if (!rh) return;
+        const isHidden = el.style.display === 'none' || el.classList.contains('hidden');
+        if (!isHidden) {
+            rh.textContent = `${counter}. ${headings[i]}`;
+            counter++;
+        }
+    });
 }
 function addCH(){document.querySelectorAll('.coll-hdr').forEach(h=>{h.onclick=()=>{const b=document.getElementById('cb-'+h.getAttribute('data-idx'));const a=h.querySelector('.coll-arrow');const open=!b.classList.contains('hidden');b.classList.toggle('hidden',open);a.textContent=open?'▾':'▴';};});}
 async function sendMsg(){
   const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';addMsg('u',msg);const tid=addThink();
   const key=S.keys.claude||document.getElementById('k-claude').value.trim();
-  if(!key){removeEl(tid);addMsg('a',`Session: ${S.imgs} image(s), ${S.buildings} buildings using ${S.mLabel}. Add an API key in Settings for full AI responses.`);return;}
+  if(!key){removeEl(tid);addMsg('a',`Session: ${S.imgs} image(s), ${S.buildings} buildings using ${S.mLabel}.Add an API key in Settings for full AI responses.`);return;}
+  const fileInput = document.getElementById('fi');
+  // Only attach image on first message or if user explicitly asks about the image
+  const imageFile = (S.chat.length === 0 && fileInput.files.length) 
+      ? fileInput.files[0] 
+      : null;
   S.chat.push({role:'user',content:msg});
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:`Post-disaster triage assistant for NIST. TornadoNet IN-CORE DS0-DS4 T1-T5. Session: ${S.imgs} images, ${S.buildings} buildings, model: ${S.mLabel}. CRADA CN-24-0590. Be concise and technical.`,messages:S.chat})});
-    const data=await resp.json();const reply=data.content?.[0]?.text||'No response.';S.chat.push({role:'assistant',content:reply});removeEl(tid);addMsg('a',reply);
-  }catch(e){removeEl(tid);addMsg('a','Connection error. Check API key in Settings.');}
+    const apiUrl = document.getElementById('api-url').value.trim() || 'http://localhost:8000';
+    const dsummary = S.results.length 
+        ? S.results.map((r,i) => `Building ${i+1}: ${r.ds} (${Math.round(r.conf*100)}% confidence)`).join(', ')
+        : 'No detections yet';
+
+    const distSummary = S.results.length
+        ? Object.entries(S.results.reduce((acc, r) => { acc[r.ds] = (acc[r.ds]||0)+1; return acc; }, {}))
+            .map(([k,v]) => `${k}: ${v}`).join(', ')
+        : 'none';
+    const incoreRef = `
+            IN-CORE T1-T5 Damage State Criteria (Wood Frame Buildings):
+            DS1 (Slight):    Roof covering 2-15% damaged AND/OR 1 window/door failure AND/OR no roof sheathing failure AND/OR no roof-to-wall connection failure
+            DS2 (Moderate):  Roof covering 15-50% damaged AND/OR 2-3 windows/doors failed AND/OR 1-3 sections roof sheathing failed AND/OR no roof-to-wall failure
+            DS3 (Extensive): Roof covering >50% damaged AND/OR >3 windows/doors failed AND/OR >3 sheathing sections AND <35% area failed AND/OR no roof-to-wall failure
+            DS4 (Complete):  Roof covering >50% (typically) AND/OR >3 windows/doors (typically) AND/OR >35% sheathing failed AND/OR roof-to-wall connection failure
+            DS0 (Undamaged): No visible damage to any element.
+            Rule: Final DS = rightmost column reached by ANY single element.`;
+    const sys = `You are a post-disaster damage triage assistant for NIST professionals. 
+                You work with TornadoNet (IN-CORE DS0-DS4, T1-T5 wood frame matrix): ${incoreRef}. 
+                
+                Current session data:
+                - Images analyzed: ${S.imgs}
+                - Total buildings detected: ${S.buildings}
+                - Active model: ${S.mLabel}
+                - Individual detections: ${dsummary}
+                - Damage distribution: ${distSummary}
+
+                Be concise, conversational, human-like, and technical.
+                
+                Use this session data to answer questions about damage findings and response priorities.`;
+                
+    const payload = {
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: sys,
+        messages: S.chat
+    };
+
+    const formData = new FormData();
+    formData.append('payload', JSON.stringify(payload));
+    if (imageFile) formData.append('file', imageFile);
+
+    const resp = await fetch(`${apiUrl}/chat?api_key=${encodeURIComponent(key)}`, {
+        method: 'POST',
+        body: formData
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || 'No response.';
+    S.chat.push({ role: 'assistant', content: reply });
+    removeEl(tid);
+    addMsg('a', marked.parse(reply));
+    } catch(e) {
+        console.error('Chat error:', e);
+        removeEl(tid);
+        addMsg('a', 'Connection error. Check API key in Settings.');
+    }
 }
-function addMsg(role,text){const box=document.getElementById('chat-msgs');const d=document.createElement('div');d.className=`cm ${role}`;d.innerHTML=`<div class="cs">${role==='u'?'You':'TornadoNet Assistant'}</div><div class="cb">${text}</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function addMsg(role,text){const content = role === 'a' ? marked.parse(text) : text; const box=document.getElementById('chat-msgs');const d=document.createElement('div');d.className=`cm ${role}`;d.innerHTML = `<div class="cs">${role==='u'?'You':'TornadoNet Assistant'}</div><div class="cb">${content}</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;}
 function addThink(){const box=document.getElementById('chat-msgs');const id='t'+Date.now();const d=document.createElement('div');d.className='cm a';d.id=id;d.innerHTML=`<div class="cs">TornadoNet Assistant</div><div class="cb"><div class="pulse"><span></span><span></span><span></span></div></div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;return id;}
 function removeEl(id){document.getElementById(id)?.remove();}
 function clearChat(){S.chat=[];document.getElementById('chat-msgs').innerHTML=`<div class="cm a"><div class="cs">TornadoNet Assistant</div><div class="cb">Chat cleared. How can I assist?</div></div>`;}
 function setMsg(t){document.getElementById('chat-in').value=t;nav('assistant');setTimeout(sendMsg,80);}
 function q(t){setMsg(t);}
 function updAsst(){document.getElementById('ctx-a').textContent={claude:'Claude',gpt4o:'GPT-4o',gemini:'Gemini 1.5 Pro',grok:'Grok-2'}[document.getElementById('asst-sel').value]||'Claude';}
+async function chatWithImage(prompt, imageFile = null, maxTokens = 600) {
+    const apiUrl = document.getElementById('api-url').value.trim() || 'http://localhost:8000';
+    const key = S.keys.claude || document.getElementById('k-claude').value.trim();
+
+    const payload = {
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        messages: [{ role: 'user', content: prompt }]
+    };
+
+    const formData = new FormData();
+    formData.append('payload', JSON.stringify(payload));
+    if (imageFile) formData.append('file', imageFile);
+
+    const resp = await fetch(`${apiUrl}/chat?api_key=${encodeURIComponent(key)}`, {
+        method: 'POST',
+        body: formData
+    });
+    const data = await resp.json();
+    return data.content?.[0]?.text || '';
+}
 async function genReport(){
+  if (!S.results.length) {
+    document.getElementById('rpt-narr').textContent = 'Run analysis on an image first before generating a report.';
+    return;
+  }
   const lbl=document.getElementById('gen-lbl'),sp=document.getElementById('gen-sp');lbl.textContent='Generating...';sp.classList.remove('hidden');fillReport();
   const key=S.keys.claude||document.getElementById('k-claude').value.trim();
-  if(!key){await sleep(1000);document.getElementById('rpt-narr').innerHTML='<em style="color:var(--color-text-secondary);">Add an API key in Settings for live AI narrative generation.</em><br><br>TornadoNet analysis indicates a mixed damage pattern. Predominant DS0–DS1 classifications suggest peripheral tornado exposure, with isolated DS3 findings indicating localized high-wind corridors.';document.getElementById('rpt-recs').innerHTML='<strong style="font-weight:500;">1. Immediate:</strong> Deploy structural engineers to DS3 and DS4 addresses.<br><strong style="font-weight:500;">2. Short-term:</strong> Coordinate with emergency management on DS2 occupancy assessments.<br><strong style="font-weight:500;">3. Recovery:</strong> Use DS distribution to calibrate IN-CORE fragility curves.';lbl.textContent='Regenerate';sp.classList.add('hidden');return;}
+  if(!key){await sleep(1000);document.getElementById('rpt-narr').innerHTML='<em style="color:var(--color-text-secondary);">Add an API key in Settings for live AI narrative generation.</em>';document.getElementById('rpt-recs').innerHTML='<em style="color:var(--color-text-secondary);">Add an API key in Settings for live AI narrative generation.</em>';lbl.textContent='Regenerate';sp.classList.add('hidden');return;}
   const dsum=S.results.length?S.results.map(r=>`${r.ds} (${Math.round(r.conf*100)}%)`).join(', '):'no detections yet';
+  
+  const apiUrl = document.getElementById('api-url').value.trim() || 'http://localhost:8000';
+  const dsummary = S.results.length 
+      ? S.results.map((r,i) => `Building ${i+1}: ${r.ds} (${Math.round(r.conf*100)}% confidence)`).join(', ')
+      : 'No detections yet';
+  const distSummary = S.results.length
+      ? Object.entries(S.results.reduce((acc,r) => { acc[r.ds]=(acc[r.ds]||0)+1; return acc; }, {}))
+          .map(([k,v]) => `${k}: ${v}`).join(', ')
+      : 'none';
+  const includeNarrative = document.getElementById('tog-narrative').classList.contains('on');
+  const includePriorities = document.getElementById('tog-priorities').classList.contains('on');
+  const includeArchetype = document.getElementById('tog-archetype').classList.contains('on');
+  const includeVLM = document.getElementById('tog-vlm').classList.contains('on');
+
+  // ── CALL 1: main report sections ──────────────────────────────────────────
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:`NIST post-tornado report. TornadoNet detected: ${dsum}. Respond ONLY with valid JSON, no markdown: {"narrative":"2 formal sentences","recommendations":"3 numbered recommendations"}`}]})});
+    const promptParts = [`You are a NIST structural engineer writing a formal fact-grounded post-tornado damage assessment report.
+
+                          Session data:
+                          - Images analyzed: ${S.imgs}
+                          - Total buildings detected: ${S.buildings}
+                          - Active model: ${S.mLabel}
+                          - Individual detections: ${dsummary}
+                          - Damage distribution: ${distSummary}
+
+                          IN-CORE T1-T5 Damage State Criteria (Wood Frame Buildings):
+                          DS1 (Slight):    Roof covering 2-15% damaged AND/OR 1 window/door failure AND/OR no roof sheathing failure AND/OR no roof-to-wall connection failure
+                          DS2 (Moderate):  Roof covering 15-50% damaged AND/OR 2-3 windows/doors failed AND/OR 1-3 sections roof sheathing failed AND/OR no roof-to-wall failure  
+                          DS3 (Extensive): Roof covering >50% damaged AND/OR >3 windows/doors failed AND/OR >3 sheathing sections AND <35% area failed AND/OR no roof-to-wall failure
+                          DS4 (Complete):  Roof covering >50% (typically) AND/OR >3 windows/doors (typically) AND/OR >35% sheathing failed AND/OR roof-to-wall connection failure
+                          DS0 (Undamaged): No visible damage to any element.
+
+                          Write a formal NIST-style fact-grounded damage assessment report. Respond ONLY with valid JSON, no markdown:
+                          {`
+                        ];
+    
+    const fields = [];
+    if (includeNarrative) fields.push(`"narrative": "3-4 formal sentences describing the overall damage pattern, referencing specific DS levels detected and their structural implications for wood frame T1-T5 archetypes"`);
+    if (includePriorities) fields.push(`"recommendations": "5 numbered specific response recommendations prioritized by DS severity, referencing IN-CORE damage states where relevant"`);
+    if (includeArchetype)  fields.push(`"archetype_notes": "1-2 sentences on T1-T5 archetype implications"`);
+    fields.push(`"summary_stats": "1 sentence summarizing the damage distribution across DS levels"`);
+    
+    const content = promptParts[0] + fields.join(',\n') + '}';
+    const formData = new FormData();
+    formData.append('payload', JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content }]
+    }));
+
+    const resp = await fetch(`${apiUrl}/chat?api_key=${encodeURIComponent(key)}`, {
+        method: 'POST', body: formData
+    });
     const data=await resp.json();let txt=data.content?.[0]?.text||'{}';txt=txt.replace(/```json|```/g,'').trim();const p=JSON.parse(txt);
-    document.getElementById('rpt-narr').innerHTML=p.narrative||'';document.getElementById('rpt-recs').innerHTML=p.recommendations||'';
-  }catch(e){document.getElementById('rpt-narr').textContent='Generation failed. Check API key.';}
-  lbl.textContent='Regenerate';sp.classList.add('hidden');
+    // Render main sections based on toggles and API response
+    document.getElementById('section-narrative').style.display = includeNarrative ? 'block' : 'none';
+    document.getElementById('section-recommendations').style.display = includePriorities ? 'block' : 'none';
+    if (includeNarrative) document.getElementById('rpt-narr').innerHTML = p.narrative || '';
+    if (includePriorities) {
+        const recs = (p.recommendations || '')
+            .split(/(?=\d+\.)/)  // split before each number
+            .filter(s => s.trim())
+            .map(s => `<div style="margin-bottom:6px;">${s.trim()}</div>`)
+            .join('');
+        document.getElementById('rpt-recs').innerHTML = recs;
+    };
+    const archetypeSection = document.getElementById('archetype-section');
+    if (includeArchetype) {
+        archetypeSection.classList.remove('hidden');
+        document.getElementById('rpt-archetype').innerHTML = p.archetype_notes || '';
+    } else {
+        archetypeSection.classList.add('hidden');
+    }
+    const summaryEl = document.getElementById('rpt-summary');
+    if (summaryEl) summaryEl.innerHTML = p.summary_stats || '';
+
+    renumberReportSections();
+
+    } catch(e) {
+        console.error('Report generation error:', e);
+        document.getElementById('rpt-narr').textContent = 'Generation failed. Check API key.';
+        lbl.textContent = 'Regenerate';
+        sp.classList.add('hidden');
+        return;
+    }
+
+  // ── CALL 2: VLM–TornadoNet comparison (separate, only if toggled) ─────────
+  const vlmSection = document.getElementById('section-vlm');
+  const vlmOutput = document.getElementById('vlm-output');
+  const vlmAvailable = vlmOutput && vlmOutput.innerHTML.trim().length > 0;
+
+  if (includeVLM) {
+      vlmSection.classList.remove('hidden');
+      const rptVlm = document.getElementById('rpt-vlm');
+
+      if (!vlmAvailable) {
+          rptVlm.innerHTML = `<div style="padding:8px 12px;background:#faeeda;color:#633806;border:0.5px solid #f0c04066;border-radius:var(--border-radius-md);font-size:12px;">
+              No VLM assessment available for this session. Enable AI Structural Assessment in the Assess tab and run analysis before generating this section.
+          </div>`;
+      } else {
+          // Show progress note while second call runs
+          rptVlm.innerHTML = `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--color-text-secondary);">
+              <span class="spinner"></span> Generating VLM–TornadoNet comparison...
+          </div>`;
+
+          try {
+              const fileInput = document.getElementById('fi');
+              const imageFile = fileInput.files.length ? fileInput.files[0] : null;
+              const canvas = document.getElementById('det-canvas');
+
+              // Extract VLM parsed data from DOM if available
+              const vlmCards = document.querySelectorAll('.coll-hdr');
+              const vlmSummary = Array.from(vlmCards).map((h,i) => {
+                  const spans = h.querySelectorAll('span');
+                  return spans[0]?.textContent + ': ' + (spans[2]?.textContent || '');
+              }).join('; ');
+
+              const matchPrompt = `You are a NIST structural engineer writing a formal VLM–TornadoNet comparison section for a fact-grounded post-tornado damage assessment report for NIST.
+
+                TornadoNet bounding box detections (${canvas.width}x${canvas.height}px image):
+                ${S.results.map((r,i) => {
+                    const b = S.detBoxes[i];
+                    const bbox = b ? `[${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.x+b.w)},${Math.round(b.y+b.h)}]` : 'unknown';
+                    return `Detection ${i+1}: ${r.ds} (${Math.round(r.conf*100)}% confidence) bbox=${bbox}`;
+                }).join('\n')}
+
+                VLM structural assessments:
+                ${vlmSummary}
+
+                Using the image and spatial/descriptive information:
+                1. Match structures between systems using bounding box position and VLM location descriptions
+                2. Note specific agreements and discrepancies at the structure level with DS references
+                3. Explain unmatched detections (split detection, occlusion, viewing angle)
+                4. Conclude what the comparison implies about severity confidence
+
+                Write 3-4 formal sentences suitable for a fact-grounded NIST report; no markdown. Reference IN-CORE DS levels specifically.`;
+
+              const compText = await chatWithImage(matchPrompt, imageFile, 350);
+              rptVlm.innerHTML = compText;
+
+              } catch(e) {
+                  console.error('VLM comparison error:', e);
+                  document.getElementById('rpt-vlm').innerHTML = 'VLM comparison generation failed.';
+              }
+          }
+
+          renumberReportSections();
+      } else {
+          vlmSection.classList.add('hidden');
+      }
+
+      lbl.textContent = 'Regenerate';
+      sp.classList.add('hidden');
 }
+
 function fillReport(){document.getElementById('rpt-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('rpt-tot').textContent=S.buildings||'—';if(S.results.length){const c={DS0:0,DS1:0,DS2:0,DS3:0,DS4:0};S.results.forEach(r=>c[r.ds]++);['DS0','DS1','DS2','DS3','DS4'].forEach(ds=>{const el=document.getElementById('rpt-'+ds.toLowerCase());if(el)el.textContent=c[ds]+' structure'+(c[ds]!==1?'s':'');});}}
-function loadDemo(){document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');S._img=null;runAnalysis();}
+// function loadDemo(){document.getElementById('preview-placeholder').classList.add('hidden');document.getElementById('preview-wrap').classList.remove('hidden');S._img=null;runAnalysis();}
+
+const DEMOS = [
+    {name: 'Demo 1', url: 'https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo1.jpg'},
+    {name: 'Demo 2', url: 'https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo2.jpg'},
+    {name: 'Demo 3', url: 'https://raw.githubusercontent.com/crumeike/TornadoNet-App/main/demos/demo3.jpg'},
+];
+
+function loadDemo(url) {
+    if (!url) return;
+    fetch(url)
+        .then(r => r.blob())
+        .then(blob => {
+            const filename = url.split('/').pop();
+            const f = new File([blob], filename, {type: 'image/jpeg'});
+            const dt = new DataTransfer();
+            dt.items.add(f);
+            document.getElementById('fi').files = dt.files;
+            onFiles(dt.files);
+            runAnalysis();
+        })
+        .catch(e => console.error('Demo load failed:', e));
+}
 function exportCSV(){const rows=[['building','damage_state','confidence_pct','model']];S.results.forEach((r,i)=>rows.push([`building_${String(i+1).padStart(3,'0')}`,r.ds,Math.round(r.conf*100),S.mLabel]));const csv=rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download='tornadonet_results.csv';a.click();}
-function testConn(){const url=document.getElementById('api-url').value;const st=document.getElementById('conn-st');st.innerHTML=`<span class="spinner"></span> Testing...`;setTimeout(()=>{st.innerHTML=url?`<span class="dot dr"></span>Connection refused — start backend first`:`<span class="dot dy"></span>No URL configured`;},1600);}
+// function testConn(){const url=document.getElementById('api-url').value;const st=document.getElementById('conn-st');st.innerHTML=`<span class="spinner"></span> Testing...`;setTimeout(()=>{st.innerHTML=url?`<span class="dot dr"></span>Connection refused — start backend first`:`<span class="dot dy"></span>No URL configured`;},1600);}
+async function testConn() {
+  const url = document.getElementById('api-url').value.trim();
+  const st = document.getElementById('conn-st');
+  if (!url) {
+    st.innerHTML = `<span class="dot dy"></span>No URL configured`;
+    return;
+  }
+  st.innerHTML = `<span class="spinner"></span> Testing...`;
+  try {
+    const resp = await fetch(`${url}/health`);
+    const data = await resp.json();
+    if (data.status === 'ok') {
+      st.innerHTML = `<span class="dot dg"></span>Connected — ${data.available_models.length} models available`;
+      document.getElementById('sb-sim-status').textContent = 'TornadoNet: live mode';  // ← success
+      document.querySelector('#sb-sim-status').previousElementSibling.className = 'dot dg';
+      const el = document.getElementById('endpoint-status');
+      el.textContent = 'Live mode';
+      el.style.color = '#4a9e6b';
+    } else {
+      st.innerHTML = `<span class="dot dr"></span>Unexpected response`;
+      document.getElementById('sb-sim-status').textContent = 'TornadoNet: simulation mode';  // ← failure
+      const el = document.getElementById('endpoint-status');
+      el.textContent = 'Simulation mode';
+      el.style.color = '#ba7517';
+    }
+  } catch (e) {
+    st.innerHTML = `<span class="dot dr"></span>Connection failed — check URL and backend`;
+    document.getElementById('sb-sim-status').textContent = 'TornadoNet: simulation mode';  // ← failure
+    const el = document.getElementById('endpoint-status');
+    el.textContent = 'Simulation mode';
+    el.style.color = '#ba7517';
+  }
+}
 function saveSettings(){S.keys.claude=document.getElementById('k-claude').value;S.keys.openai=document.getElementById('k-openai').value;S.keys.gemini=document.getElementById('k-gemini').value;S.keys.grok=document.getElementById('k-grok').value;const btn=document.querySelector('#v-settings .btn-p');btn.textContent='Saved';setTimeout(()=>btn.textContent='Save',1800);}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-let cB=false;
-function initCharts(){
-  if(cB)return;cB=true;document.getElementById('d-i').textContent=Math.max(S.imgs,1);document.getElementById('d-b').textContent=Math.max(S.buildings,8);const crit=S.results.filter(r=>r.ds==='DS3'||r.ds==='DS4').length;document.getElementById('d-c').textContent=Math.round((crit/Math.max(S.results.length,8))*100)+'%';document.getElementById('d-cf').textContent='84%';
-  new Chart(document.getElementById('ch-dist'),{type:'bar',data:{labels:['DS0','DS1','DS2','DS3','DS4'],datasets:[{data:[42,23,18,11,6],backgroundColor:['#4a9e6b','#f0c040','#e8883a','#d44e2a','#8b1a1a']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:11}}},y:{ticks:{color:'#888'},beginAtZero:true}}}});
-  new Chart(document.getElementById('ch-perf'),{type:'radar',data:{labels:['mAP@0.5','F1 Score','Ordinal Acc','Speed','MAOE (inv)'],datasets:[{data:[89,92,91,78,91],borderColor:'#534AB7',backgroundColor:'#534AB722',pointBackgroundColor:'#534AB7'},{data:[92,99,85,66,85],borderColor:'#1a3a5c',backgroundColor:'#1a3a5c22',pointBackgroundColor:'#1a3a5c'},{data:[82,91,85,100,85],borderColor:'#4a9e6b',backgroundColor:'#4a9e6b22',pointBackgroundColor:'#4a9e6b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{ticks:{display:false},grid:{color:'#ccc'},pointLabels:{color:'#666',font:{size:10}},min:0,max:100}}}});
-  new Chart(document.getElementById('ch-ord'),{type:'bar',data:{labels:['RT-DETR-L + Ordinal','YOLO11x','YOLO11n'],datasets:[{data:[91.15,85.20,84.79],backgroundColor:['#534AB7','#1a3a5c','#4a9e6b']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:10}}},y:{ticks:{color:'#888'},min:78,max:95}}}});
+let distChart, perfChart, ordChart;
+
+function initCharts() {
+    // Update metrics with real session data
+    document.getElementById('d-i').textContent = S.imgs || 0;
+    document.getElementById('d-b').textContent = S.buildings || 0;
+    const crit = S.results.filter(r => r.ds === 'DS3' || r.ds === 'DS4').length;
+    document.getElementById('d-c').textContent = S.results.length 
+        ? Math.round((crit / S.results.length) * 100) + '%' : '0%';
+    const avgConf = S.results.length 
+        ? Math.round(S.results.reduce((a,r) => a + r.conf, 0) / S.results.length * 100) + '%' : '—';
+    document.getElementById('d-cf').textContent = avgConf;
+
+    // Real damage distribution from session
+    const dist = {DS0:0, DS1:0, DS2:0, DS3:0, DS4:0};
+    S.results.forEach(r => dist[r.ds] = (dist[r.ds]||0) + 1);
+    const distData = [dist.DS0, dist.DS1, dist.DS2, dist.DS3, dist.DS4];
+
+    // Destroy existing charts before recreating
+    if (distChart) distChart.destroy();
+    if (perfChart) perfChart.destroy();
+    if (ordChart) ordChart.destroy();
+
+    distChart = new Chart(document.getElementById('ch-dist'), {
+        type: 'bar',
+        data: {
+            labels: ['DS0','DS1','DS2','DS3','DS4'],
+            datasets: [{
+                data: S.results.length ? distData : [42,23,18,11,6],
+                backgroundColor: ['#4a9e6b','#f0c040','#e8883a','#d44e2a','#8b1a1a']
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+                title: { display: !S.results.length, text: 'Sample data — run analysis to see real results', font: {size:10}, color:'#ba7517' }
+            },
+            scales: { x: { ticks: {color:'#888', font:{size:11}} }, y: { ticks:{color:'#888'}, beginAtZero:true } }
+        }
+    });
+
+    // Performance radar — always from paper (model comparison doesn't change)
+    perfChart = new Chart(document.getElementById('ch-perf'), {
+        type: 'radar',
+        data: {
+            labels: ['mAP@0.5','F1 Score','Ordinal Acc','Speed','MAOE (inv)'],
+            datasets: [
+                {data:[89,92,91,78,91], borderColor:'#534AB7', backgroundColor:'#534AB722', pointBackgroundColor:'#534AB7'},
+                {data:[92,99,85,66,85], borderColor:'#1a3a5c', backgroundColor:'#1a3a5c22', pointBackgroundColor:'#1a3a5c'},
+                {data:[82,91,85,100,85], borderColor:'#4a9e6b', backgroundColor:'#4a9e6b22', pointBackgroundColor:'#4a9e6b'}
+            ]
+        },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+            scales:{r:{ticks:{display:false}, grid:{color:'#ccc'}, pointLabels:{color:'#666',font:{size:10}}, min:0, max:100}}
+        }
+    });
+
+    ordChart = new Chart(document.getElementById('ch-ord'), {
+        type: 'bar',
+        data: {
+            labels: ['RT-DETR-L + Ordinal','YOLO11x','YOLO11n'],
+            datasets: [{ data:[91.15,85.20,84.79], backgroundColor:['#534AB7','#1a3a5c','#4a9e6b'] }]
+        },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+            scales:{ x:{ticks:{color:'#888',font:{size:10}}}, y:{ticks:{color:'#888'}, min:78, max:95} }
+        }
+    });
 }
+
 </script>

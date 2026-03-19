@@ -1,0 +1,6 @@
+Requirement already satisfied: httpx in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (0.28.1)
+Requirement already satisfied: anyio in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from httpx) (4.12.1)
+Requirement already satisfied: certifi in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from httpx) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from httpx) (1.0.9)
+Requirement already satisfied: idna in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from httpx) (3.11)
+Requirement already satisfied: h11>=0.16 in C:\Users\crumeike\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from httpcore==1.*->httpx) (0.16.0)

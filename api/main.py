@@ -17,12 +17,15 @@ from typing import Optional
 
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, UploadFile, HTTPException, Query
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query, Form, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from ultralytics import YOLO, RTDETR
 from PIL import Image
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # ── App ────────────────────────────────────────────────────────────────────────
 
@@ -42,11 +45,11 @@ app.add_middleware(
 # ── IN-CORE damage state metadata ─────────────────────────────────────────────
 
 DS_LABELS = {
-    0: {"id": "DS0", "name": "Undamaged",  "color": "#4a9e6b"},
-    1: {"id": "DS1", "name": "Slight",     "color": "#e6b800"},
-    2: {"id": "DS2", "name": "Moderate",   "color": "#e8883a"},
-    3: {"id": "DS3", "name": "Extensive",  "color": "#d44e2a"},
-    4: {"id": "DS4", "name": "Complete",   "color": "#8b1a1a"},
+    4: {"id": "DS0", "name": "Undamaged",  "color": "#4a9e6b"},
+    0: {"id": "DS1", "name": "Slight",     "color": "#e6b800"},
+    1: {"id": "DS2", "name": "Moderate",   "color": "#e8883a"},
+    2: {"id": "DS3", "name": "Extensive",  "color": "#d44e2a"},
+    3: {"id": "DS4", "name": "Complete",   "color": "#8b1a1a"},
 }
 
 # ── Model registry ─────────────────────────────────────────────────────────────
@@ -155,8 +158,9 @@ def cv2_to_base64(img: np.ndarray, quality: int = 90) -> str:
 def run_inference(model_id: str, img_bgr: np.ndarray, conf_threshold: float = 0.25):
     """Run inference and return structured detection results + annotated image."""
     model = load_model(model_id)
+    print(f"Running inference with model '{model_id}' at confidence threshold {conf_threshold}...")
     t0 = time.perf_counter()
-    results = model(img_bgr, conf=conf_threshold, verbose=False)
+    results = model(img_bgr, conf=conf_threshold, iou=0.5, agnostic_nms=True, verbose=False)
     inference_ms = round((time.perf_counter() - t0) * 1000, 1)
 
     detections = []
@@ -336,3 +340,152 @@ async def predict_video_frame(
     result["extracted_frame_b64"] = cv2_to_base64(frame)
     result["timestamp_sec"]       = timestamp_sec
     return JSONResponse(content=result)
+
+@app.post("/vlm", tags=["AI Analysis"])
+async def vlm_assess(
+    file: UploadFile = File(...),
+    provider: str = Query(default="claude"),
+    api_key: str = Form(default=""),  # ← Form instead of Query
+):
+    import httpx, base64
+
+    # Read and encode image
+    raw = await file.read()
+    b64 = base64.standard_b64encode(raw).decode("utf-8")
+    ext = file.content_type  # e.g. image/jpeg
+
+    prompt = """You are a NIST structural engineer assessing post-tornado building damage from street-view imagery.
+                Identify every visually distinct building you can assess in this image.
+                For each building, apply the IN-CORE T1-T5 decision matrix (for wood frame archetypes T1-T5) and assign a damage state.
+
+                Use the following IN-CORE T1-T5 damage state criteria:
+
+                DS1 (Slight):     Roof covering 2-15% damaged AND/OR 1 window/door failure AND/OR no roof sheathing failure AND/OR no roof-to-wall connection failure
+                DS2 (Moderate):   Roof covering 15-50% damaged AND/OR 2-3 windows/doors failed AND/OR 1-3 sections of roof sheathing failed AND/OR no roof-to-wall connection failure  
+                DS3 (Extensive):  Roof covering >50% damaged AND/OR >3 windows/doors failed AND/OR >3 sheathing sections failed AND less than 35% sheathing area AND/OR no roof-to-wall connection failure
+                DS4 (Complete):   Roof covering >50% damaged (typically) AND/OR >3 windows/doors failed (typically) AND/OR >35% of roof sheathing failed AND/OR roof-to-wall connection failure
+
+                Rule: assign the rightmost (highest) DS column reached by ANY single element.
+                DS0 (Undamaged): no visible damage to any element.
+
+                For each building provide:
+                - building: sequential number
+                - location_description: relative position in the scene (e.g. "left foreground", "center background")
+                - color: primary exterior color (e.g. "white", "red brick", "beige vinyl siding")
+                - stories: number of visible stories (e.g. 1, 2, "1.5")
+                - structure_type: brief description (e.g. "residential wood building", "light/heavy industrial building", "Office building", "business and retail building", 
+                "community center/church", "hospital", "fire/police station", "mobile home", "brick ranch", "shopping center", "middle/high school (reinforced/Unreinforced masonry)")
+                - plan_type: size and shape description (e.g. "small rectangular plan", " medium rectangular plan","large L-shaped plan")
+                - roof_type: brief description (e.g. "gable roof", "hip roof", "flat roof", "roof covered with blue/black tarps", "partially collapsed roof")
+                - roofCovering: observation and DS assignment
+                - windowDoor: observation and DS assignment
+                - roofSheathing: observation and DS assignment
+                - roofWall: observation and DS assignment
+                - overall: final DS0-DS4 using the rightmost column rule
+                - confidence_pct: integer 0-100 representing your visual assessment confidence
+                - rationale: 1 sentence referencing which element drove the final DS assignment
+
+                Respond ONLY with a valid JSON array, no markdown:
+                [{
+                "building": 1,
+                "location_description": "left foreground",
+                "color": "white vinyl siding",
+                "stories": 1,
+                "structure_type": "residential wood building",
+                "plan_type": "small rectangular plan",
+                "roof_type": "gable roof",
+                "roofCovering": {"obs": "brief observation", "ds": "DS0-DS4"},
+                "windowDoor": {"obs": "brief observation", "ds": "DS0-DS4"},
+                "roofSheathing": {"obs": "brief observation", "ds": "DS0-DS4"},
+                "roofWall": {"obs": "brief observation", "ds": "DS0-DS4"},
+                "overall": "DS0-DS4",
+                "confidence_pct": 83,
+                "rationale": "1 sentence referencing the rightmost column rule"
+                }]"""
+
+    messages = [{
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": ext,
+                    "data": b64
+                }
+            },
+            {"type": "text", "text": prompt}
+        ]
+    }]
+
+    if provider == "claude":
+        import os
+        key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        print(f"Received key: '{key}...' length={len(key)}")
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "Content-Type": "application/json",
+                    "x-api-key": key,
+                    "anthropic-version": "2023-06-01",
+                },
+                json={"model": "claude-sonnet-4-20250514", "max_tokens": 1200, "messages": messages},
+                timeout=60.0,
+            )
+            print(f"Anthropic status: {resp.status_code}")
+            # print(f"Anthropic response: {resp.text}")
+        return JSONResponse(content=resp.json(), status_code=resp.status_code)
+
+    raise HTTPException(status_code=400, detail=f"Provider '{provider}' not yet supported.")
+
+@app.post("/chat", tags=["AI Analysis"])
+async def chat(
+    payload: str = Form(...),
+    api_key: str = Query(default=""),
+    file: Optional[UploadFile] = File(default=None),
+):
+    import httpx, os, json, base64
+    key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+    
+    data = json.loads(payload)
+    
+    # If an image file is provided, inject it into the last user message
+    if file:
+        raw = await file.read()
+        b64 = base64.standard_b64encode(raw).decode("utf-8")
+        media_type = file.content_type or "image/jpeg"
+        
+        # Find the last user message and add image to it
+        messages = data.get("messages", [])
+        for i in range(len(messages) - 1, -1, -1):
+            if messages[i]["role"] == "user":
+                # Convert text content to multimodal content
+                existing_text = messages[i]["content"]
+                if isinstance(existing_text, str):
+                    messages[i]["content"] = [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": media_type,
+                                "data": b64
+                            }
+                        },
+                        {"type": "text", "text": existing_text}
+                    ]
+                break
+        data["messages"] = messages
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": key,
+                "anthropic-version": "2023-06-01",
+            },
+            json=data,
+            timeout=60.0,
+        )
+    return JSONResponse(content=resp.json(), status_code=resp.status_code)
